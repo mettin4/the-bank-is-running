@@ -69,7 +69,25 @@ const SENTIMENT_BIAS: Record<Sentiment, { buy: number; sell: number }> = {
 
 /** How fast the market's valuation anchor follows price, and how hard it pulls. */
 const ANCHOR_ALPHA = 1 / 900;
-const ANCHOR_PULL = 0.85;
+const ANCHOR_PULL = 1.4;
+
+/**
+ * The bank's own balance sheet, as a floor under the market.
+ *
+ * A pure price anchor has no memory of what the protocol built, so a bull cycle
+ * hands back everything it gained and every run ends near where it began. The
+ * reserve is the memory: hard assets plus permanent liquidity, per token, times
+ * the multiple a calm market pays over book. The anchor is only ever pulled UP
+ * toward it, never down, so the floor ratchets and cannot fall.
+ *
+ * This is what makes direction depend on the regime. Expansion epochs route
+ * fees into gold and the floor climbs quickly; contraction epochs spend the
+ * same fees on buybacks, so only the permanent liquidity share keeps building
+ * and the floor barely moves. A bull cycle keeps its gains, a long bear does
+ * not get a rising floor to stand on.
+ */
+const BOOK_PREMIUM = 7;
+const BOOK_ALPHA = 1 / 1200;
 
 const PROFILE_MIX: { profile: Profile; weight: number }[] = [
   { profile: 'COMPOUNDER', weight: 0.3 },
@@ -385,12 +403,18 @@ export class Engine {
     const moodSell = bias.sell * (bullish ? 1 / this.severity : this.severity);
 
     const px0 = poolPrice(this.pool);
-    this.logAnchor += (Math.log(px0) - this.logAnchor) * ANCHOR_ALPHA;
-    const dev = Math.log(px0) - this.logAnchor;
-    const revert = Math.exp(-Math.max(-2.5, Math.min(2.5, dev)) * ANCHOR_PULL);
 
     // Reserves plus permanent liquidity, per token. The floor under the market.
     this.backing = (this.reserveOz * GOLD_ETH_PER_OZ + this.polEth) / Math.max(1, this.circulating);
+
+    this.logAnchor += (Math.log(px0) - this.logAnchor) * ANCHOR_ALPHA;
+    if (this.backing > 0) {
+      const book = Math.log(this.backing * BOOK_PREMIUM);
+      if (book > this.logAnchor) this.logAnchor += (book - this.logAnchor) * BOOK_ALPHA;
+    }
+
+    const dev = Math.log(px0) - this.logAnchor;
+    const revert = Math.exp(-Math.max(-2.5, Math.min(2.5, dev)) * ANCHOR_PULL);
     const support = px0 > 0 && this.backing > px0 ? 1 + Math.min(4, this.backing / px0 - 1) * 1.6 : 1;
 
     const scale = this.pool.eth * 0.0062;
@@ -694,8 +718,8 @@ export class Engine {
   /** How often an eligible banker even considers expanding this opportunity. */
   private get expansionAppetite(): number {
     const bullish = this.sentiment === 'ACCUMULATION' || this.sentiment === 'EXPANSION';
-    if (this.regime === 'EXPANSION') return bullish ? 0.85 : 0.5;
-    return bullish ? 0.3 : 0.1;
+    if (this.regime === 'EXPANSION') return bullish ? 0.85 : 0.45;
+    return bullish ? 0.16 : 0.05;
   }
 
   /** The daily yield the branch being bought would actually earn once it opens. */

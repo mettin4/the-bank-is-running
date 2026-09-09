@@ -238,6 +238,15 @@
   margin-top: var(--s1);
 }
 
+/* The price comes out of a synthetic market, and the panel says so. */
+.statrow-cell .statrow-caveat {
+  color: var(--ghost);
+  letter-spacing: 0.08em;
+  /* Sibling .sub rows are nowrap. This one is long enough to need to wrap. */
+  white-space: normal;
+  line-height: 1.6;
+}
+
 /* --------------------------------------------------------- flash banner -- */
 
 /* An overlay, not a row. It is taken out of flow entirely, so showing or

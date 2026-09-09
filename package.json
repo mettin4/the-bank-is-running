@@ -10,7 +10,8 @@
     "test": "vitest run",
     "sim": "tsx scripts/soak.ts",
     "dormancy": "tsx scripts/dormancy.ts",
-    "licenses": "tsx scripts/licenses.ts"
+    "licenses": "tsx scripts/licenses.ts",
+    "prices": "tsx scripts/price-paths.ts"
   },
   "dependencies": {
     "react": "^18.3.1",

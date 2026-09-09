@@ -54,6 +54,7 @@ export function StatRow({ s }: { s: Snapshot }) {
         <div ref={ref} className="statrow-spark">
           <Spark data={s.priceSeries} width={w} height={26} stroke="var(--gold)" logScale />
         </div>
+        <div className="sub statrow-caveat">SYNTHETIC MARKET · NOT A FORECAST</div>
       </div>
     </div>
   );
