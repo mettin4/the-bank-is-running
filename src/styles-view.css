@@ -1,0 +1,632 @@
+/* ==========================================================================
+   LAYERED VIEW
+   Tabs, narrator, hints, orientation and the flash banner. Same tokens, same
+   type scale, same 8px rhythm as styles.css.
+   ========================================================================== */
+
+/* ----------------------------------------------------------------- tabs -- */
+
+.tabs {
+  position: sticky;
+  top: 0;
+  z-index: 12;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+  margin: 0 calc(var(--s4) * -1);
+  padding: 0 var(--s4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+}
+
+.tabs-bar {
+  display: flex;
+}
+
+.tab {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  color: var(--faint);
+  font-family: var(--mono);
+  font-size: var(--t1);
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: var(--s2) 0;
+  margin-right: var(--s3);
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    color 160ms var(--ease),
+    border-color 160ms var(--ease);
+}
+
+.tab:last-child {
+  margin-right: 0;
+}
+
+.tab:hover {
+  color: var(--text);
+}
+
+.tab[aria-selected="true"] {
+  color: var(--gold);
+  border-bottom-color: var(--gold);
+}
+
+.tab:focus-visible {
+  outline: 1px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.tabs-caption {
+  font-size: var(--t1);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ghost);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ------------------------------------------------------------- narrator -- */
+
+.narrator {
+  background: var(--bg-inset);
+}
+
+.narrator-line {
+  font-size: var(--t3);
+  line-height: 1.62;
+  color: var(--text);
+  margin: var(--s2) 0 0;
+  border-left: 2px solid var(--gold);
+  padding-left: var(--s2);
+  letter-spacing: 0.005em;
+}
+
+/* The rail copy is the one that shows on a wide screen. On a narrow screen the
+   rail sits below the content, so the top copy takes over instead. */
+.narrator-top {
+  display: none;
+}
+
+/* ----------------------------------------------------------- panel head -- */
+
+.panel-title {
+  display: block;
+  margin: 0;
+  font-size: var(--t1);
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.block-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: var(--s1);
+}
+
+/* ----------------------------------------------------------------- hint -- */
+
+.hint-wrap {
+  position: relative;
+  display: inline-flex;
+  vertical-align: middle;
+  margin-left: 6px;
+}
+
+.hint {
+  appearance: none;
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--ghost);
+  font-family: var(--mono);
+  font-size: 9px;
+  line-height: 1;
+  width: 14px;
+  height: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: help;
+  padding: 0;
+  flex-shrink: 0;
+  transition:
+    color 160ms var(--ease),
+    border-color 160ms var(--ease);
+}
+
+.hint-wrap:hover .hint,
+.hint:focus-visible {
+  color: var(--gold);
+  border-color: var(--gold-dim);
+  outline: none;
+}
+
+.hint-pop {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: -8px;
+  width: 264px;
+  max-width: 70vw;
+  background: var(--bg-sunken);
+  border: 1px solid var(--line-hard);
+  border-left: 2px solid var(--gold);
+  padding: var(--s2);
+  font-size: var(--t1);
+  font-weight: 400;
+  line-height: 1.72;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  /* Kickers and table cells are nowrap. The popover must not inherit that. */
+  white-space: normal;
+  color: var(--dim);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-3px);
+  transition:
+    opacity 160ms var(--ease),
+    transform 160ms var(--ease);
+  z-index: 30;
+}
+
+.hint-wrap:hover .hint-pop,
+.hint-wrap:focus-within .hint-pop,
+.hint-wrap[data-open="true"] .hint-pop {
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
+}
+
+/* A popover anchored near the right edge flips, so it never reaches past the
+   scroll container and never opens a horizontal scrollbar. */
+.grid-2 > *:last-child .hint-pop,
+.statrow-cell:last-child .hint-pop,
+.hero-head > div:nth-child(2) .hint-pop {
+  left: auto;
+  right: -8px;
+}
+
+/* ------------------------------------------------------------- stat row -- */
+
+.statrow {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--s4);
+  border: 1px solid var(--line);
+  background: var(--bg-raised);
+  padding: var(--s4);
+}
+
+.statrow-cell {
+  min-width: 0;
+}
+
+.statrow-cell .kicker {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.statrow-v {
+  display: block;
+  font-size: var(--t4);
+  line-height: 1.25;
+  margin-top: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.statrow-cell .sub {
+  font-size: var(--t1);
+  color: var(--ghost);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-top: 4px;
+  white-space: nowrap;
+}
+
+.statrow-spark {
+  margin-top: var(--s1);
+}
+
+/* --------------------------------------------------------- flash banner -- */
+
+/* An overlay, not a row. It is taken out of flow entirely, so showing or
+   hiding it can never move a single pixel of the content underneath. Clicks
+   pass straight through to the tab bar it briefly covers. */
+.flash-slot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 25;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.flash-slot.is-on {
+  height: 42px;
+  border-bottom: 1px solid var(--line);
+}
+
+
+.flash {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  height: 42px;
+  padding: 0 var(--s4);
+  border-left: 2px solid var(--gold);
+  background: var(--bg);
+  font-size: var(--t2);
+  letter-spacing: 0.04em;
+  animation: fadein 200ms var(--ease);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.flash-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.flash-slot.tone-neg .flash {
+  border-left-color: var(--neg);
+  background:
+    linear-gradient(rgba(184, 101, 78, 0.1), rgba(184, 101, 78, 0.1)),
+    var(--bg);
+  color: var(--neg);
+}
+
+.flash-slot.tone-pos .flash {
+  border-left-color: var(--pos);
+  background:
+    linear-gradient(rgba(127, 156, 107, 0.09), rgba(127, 156, 107, 0.09)),
+    var(--bg);
+  color: var(--pos);
+}
+
+.flash-slot.tone-neutral .flash {
+  background: linear-gradient(var(--gold-ghost), var(--gold-ghost)), var(--bg);
+  color: var(--gold);
+}
+
+.flash .kicker {
+  color: inherit;
+  opacity: 0.62;
+}
+
+/* --------------------------------------------------------- orientation -- */
+
+.orient {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(18, 18, 16, 0.88);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--s3);
+  animation: fadein 300ms var(--ease);
+  transition: opacity 300ms var(--ease);
+}
+
+.orient.is-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.orient-card {
+  width: 100%;
+  max-width: 560px;
+  background: var(--bg-raised);
+  border: 1px solid var(--line-hard);
+  border-left: 2px solid var(--gold);
+  padding: var(--s4);
+}
+
+.orient-line {
+  font-size: var(--t3);
+  line-height: 1.65;
+  color: var(--text);
+  margin: var(--s2) 0 0;
+}
+
+.orient-line-last {
+  color: var(--gold);
+}
+
+.orient-btn {
+  appearance: none;
+  margin-top: var(--s4);
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--gold-dim);
+  color: var(--gold);
+  font-family: var(--mono);
+  font-size: var(--t1);
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 13px 0;
+  cursor: pointer;
+  transition:
+    background 160ms var(--ease),
+    color 160ms var(--ease);
+}
+
+.orient-btn:hover {
+  background: var(--gold);
+  color: var(--bg);
+}
+
+.orient-btn:focus-visible {
+  outline: 1px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* -------------------------------------------------------------- sundry --- */
+
+.empty-plot {
+  height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line-soft);
+}
+
+.assume-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 var(--s4);
+}
+
+.disclose {
+  border: 1px solid var(--line);
+  background: var(--bg-raised);
+}
+
+.foot {
+  padding: var(--s2) 0 0;
+  border-top: 1px solid var(--line-soft);
+  font-size: var(--t1);
+  color: var(--ghost);
+  letter-spacing: 0.06em;
+  line-height: 1.9;
+}
+
+.foot-sep {
+  padding: 0 var(--s1);
+  color: var(--ghost);
+}
+
+/* ------------------------------------------------------ responsive add --- */
+
+@media (max-width: 1180px) {
+  .statrow {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--s3);
+  }
+
+  .assume-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .tabs-caption {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .main {
+    padding: 0 var(--s2) var(--s3);
+    gap: var(--s3);
+  }
+
+  .tabs {
+    margin: 0 calc(var(--s2) * -1);
+    padding: 0 var(--s2);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab {
+    margin-right: var(--s2);
+  }
+
+  .panel,
+  .hero,
+  .statrow {
+    padding: var(--s3);
+  }
+
+  .grid-2 {
+    gap: var(--s3);
+  }
+
+  .statrow {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s3);
+  }
+
+  .rail-block {
+    padding: var(--s3);
+  }
+
+  .narrator-rail {
+    display: none;
+  }
+
+  .narrator-top {
+    display: block;
+    border: 1px solid var(--line);
+    background: var(--bg-inset);
+    padding: var(--s3);
+  }
+
+  .hint-pop {
+    left: auto;
+    right: 0;
+    width: 240px;
+  }
+
+  .flash {
+    padding: 0 var(--s2);
+    font-size: var(--t1);
+  }
+
+  .orient-card {
+    padding: var(--s3);
+  }
+
+  .orient-line {
+    font-size: var(--t2);
+  }
+}
+
+/* ==========================================================================
+   POLISH PASS
+   ========================================================================== */
+
+/* --- 6. the footer sits at the bottom of the viewport on a sparse tab --- */
+
+.shell {
+  min-height: 100vh;
+}
+
+.foot {
+  margin-top: auto;
+}
+
+/* --- 12. the compact readout in the header --- */
+
+.head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--s4);
+}
+
+.head-id {
+  min-width: 0;
+}
+
+.headstrip {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--s3);
+  flex-shrink: 0;
+}
+
+.headstrip-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.headstrip-v {
+  font-size: var(--t2);
+  color: var(--dim);
+  white-space: nowrap;
+}
+
+/* --- 3. the two strips of the hero chart --- */
+
+.c-strip {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  fill: var(--ghost);
+}
+
+.c-split {
+  stroke: var(--line);
+  stroke-width: 1;
+}
+
+/* --- 4. rail popovers open inside the rail, never past its edge --- */
+
+.rail .hint-wrap {
+  position: static;
+}
+
+.rail .rail-block {
+  position: relative;
+}
+
+.rail .hint-pop {
+  left: var(--s3);
+  right: var(--s3);
+  width: auto;
+  max-width: none;
+  top: auto;
+  margin-top: 20px;
+}
+
+/* --- 7. a compact empty state that the panel can hug --- */
+
+.empty-plot {
+  height: 56px;
+}
+
+/* --- a two item legend reads better stacked than side by side --- */
+
+.barkey-stack {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.barkey span {
+  white-space: nowrap;
+}
+
+/* --- 9. a window suffix, dimmer than the label it qualifies --- */
+
+.win {
+  color: var(--ghost);
+}
+
+@media (max-width: 900px) {
+  .head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--s2);
+  }
+
+  .headstrip {
+    width: 100%;
+    justify-content: space-between;
+    gap: var(--s2);
+  }
+
+  .headstrip-cell {
+    align-items: flex-start;
+  }
+
+  .rail .hint-wrap {
+    position: relative;
+  }
+
+  .rail .hint-pop {
+    left: auto;
+    right: 0;
+    width: 240px;
+    top: calc(100% + 8px);
+    margin-top: 0;
+  }
+}
