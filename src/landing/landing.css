@@ -1,0 +1,365 @@
+/* ==========================================================================
+   LANDING
+   Same tokens, same type scale, same hairlines as the terminal. A scrolling
+   story, not a scroll hijack: the page moves exactly as far as the reader
+   moves it.
+   ========================================================================== */
+
+.boot {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+}
+
+.landing {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+}
+
+/* ---------------------------------------------------------------- head --- */
+
+.lhead {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+  padding: var(--s2) var(--s4);
+  border-bottom: 1px solid var(--line);
+  background: var(--bg);
+}
+
+.lhead-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s1);
+  color: var(--text);
+  text-decoration: none;
+  min-width: 0;
+}
+
+.towermark {
+  display: block;
+  flex-shrink: 0;
+}
+
+.lhead-name {
+  font-size: var(--t1);
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  white-space: nowrap;
+}
+
+/* Says plainly, next to the protocol's own mark, that this is not the
+   protocol's own site. The footer repeats it in full. */
+.lhead-tag {
+  font-size: var(--t1);
+  letter-spacing: 0.12em;
+  color: var(--ghost);
+  border: 1px solid var(--line);
+  padding: 1px 5px;
+  white-space: nowrap;
+}
+
+.lhead-right {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  flex-shrink: 0;
+}
+
+/* -------------------------------------------------------------- buttons -- */
+
+.lbtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--gold-dim);
+  color: var(--gold);
+  background: transparent;
+  font-family: var(--mono);
+  font-size: var(--t1);
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 13px var(--s3);
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background 160ms var(--ease),
+    color 160ms var(--ease);
+}
+
+.lbtn:hover {
+  background: var(--gold);
+  color: var(--bg);
+}
+
+.lbtn:focus-visible {
+  outline: 1px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.lbtn-sm {
+  padding: 7px var(--s2);
+  letter-spacing: 0.14em;
+}
+
+.llink {
+  font-size: var(--t1);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--faint);
+  text-decoration: none;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 2px;
+  transition: color 160ms var(--ease);
+}
+
+.llink:hover {
+  color: var(--gold);
+  border-bottom-color: var(--gold-dim);
+}
+
+/* --------------------------------------------------------------- cards --- */
+
+.lmain {
+  flex: 1;
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 var(--s4);
+  display: flex;
+  flex-direction: column;
+}
+
+.lcard {
+  padding: var(--s5) 0;
+  border-bottom: 1px solid var(--line);
+}
+
+/* A card is only ever hidden once the script is running and can reveal it
+   again. Without script, and for anything that reads the page rather than
+   scrolls it, every card is simply visible. */
+[data-reveal='on'] .lcard {
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity 200ms var(--ease),
+    transform 200ms var(--ease);
+}
+
+[data-reveal='on'] .lcard.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+.lcard-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--s5);
+  align-items: center;
+}
+
+.lcard:nth-child(even) .lcard-inner {
+  direction: rtl;
+}
+
+.lcard:nth-child(even) .lcard-copy,
+.lcard:nth-child(even) .lcard-figure {
+  direction: ltr;
+}
+
+.lcard-copy {
+  min-width: 0;
+}
+
+.lcard-index {
+  display: block;
+  font-size: var(--t1);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  color: var(--ghost);
+  margin-bottom: var(--s2);
+}
+
+.lcard-head {
+  font-family: var(--serif);
+  font-size: var(--t5);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: 0.005em;
+  color: var(--text);
+  margin: 0 0 var(--s2);
+  text-wrap: balance;
+}
+
+.lcard-sub {
+  font-size: var(--t1);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  line-height: 1.9;
+  color: var(--faint);
+  margin: 0;
+}
+
+.lcard-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  margin-top: var(--s4);
+  flex-wrap: wrap;
+}
+
+.lcard-figure {
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+}
+
+/* ---------------------------------------------------------- schematics --- */
+
+.lschem {
+  display: block;
+  width: 100%;
+  max-width: 460px;
+  height: auto;
+}
+
+.ls-line {
+  stroke-width: 1.25;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.ls-grid {
+  stroke: var(--line);
+  stroke-width: 1;
+  stroke-dasharray: 1 4;
+}
+
+.ls-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  fill: var(--ghost);
+}
+
+.ls-col {
+  font-family: var(--mono);
+  font-size: 46px;
+  font-weight: 300;
+  fill: var(--dim);
+}
+
+[data-lang='zh'] .ls-label,
+[data-lang='zh'] .lcard-sub,
+[data-lang='zh'] .lhead-name,
+[data-lang='zh'] .lhead-tag {
+  letter-spacing: 0.04em;
+}
+
+/* The display serif carries no CJK, so Chinese headlines are set in the text
+   face at a weight that holds the same presence. */
+[data-lang='zh'] .lcard-head {
+  font-family: var(--mono);
+  font-size: var(--t4);
+  font-weight: 500;
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+}
+
+/* --------------------------------------------------------------- foot ---- */
+
+.landing .foot {
+  margin-top: auto;
+  padding: var(--s4) 0 var(--s5);
+  border-top: 0;
+}
+
+.foot-link-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  vertical-align: middle;
+}
+
+/* ---------------------------------------------------------- responsive --- */
+
+@media (max-width: 900px) {
+  .lhead {
+    padding: var(--s2);
+    gap: var(--s2);
+  }
+
+  /* The name is dropped, not the disclaimer: the footer states the protocol's
+     name in full, and what matters on a narrow header is that this is not the
+     protocol's own site. */
+  .lhead-name {
+    display: none;
+  }
+
+  .lhead-right {
+    gap: var(--s2);
+  }
+
+  .lhead .lbtn-sm {
+    flex-shrink: 0;
+    padding: 7px var(--s2);
+    letter-spacing: 0.1em;
+  }
+
+  .lmain {
+    padding: 0 var(--s2);
+  }
+
+  .lcard {
+    padding: var(--s4) 0;
+  }
+
+  .lcard-inner,
+  .lcard:nth-child(even) .lcard-inner {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s3);
+    direction: ltr;
+  }
+
+  /* The picture follows the sentence it illustrates, on every card. */
+  .lcard-figure {
+    order: 2;
+  }
+
+  .lcard-head {
+    font-size: var(--t4);
+  }
+
+  [data-lang='zh'] .lcard-head {
+    font-size: var(--t3);
+  }
+
+  .lbtn {
+    padding: 12px var(--s2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal='on'] .lcard {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+@media print {
+  [data-reveal='on'] .lcard {
+    opacity: 1;
+    transform: none;
+  }
+}

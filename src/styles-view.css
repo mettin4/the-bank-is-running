@@ -767,9 +767,10 @@
     gap: var(--s2);
   }
 
-  /* Parked in the empty space beside the title, so adding it costs the header
-     no height and nothing below the header moves. */
-  .langtoggle {
+  /* Parked in the empty space beside the terminal's title, so adding it costs
+     that header no height and nothing below it moves. Scoped to .head, because
+     the landing header lays its own toggle out in flow. */
+  .head .langtoggle {
     position: absolute;
     top: var(--s2);
     right: var(--s2);
