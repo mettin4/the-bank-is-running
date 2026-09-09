@@ -639,3 +639,139 @@
     margin-top: 0;
   }
 }
+
+/* ==========================================================================
+   LANGUAGE
+   ========================================================================== */
+
+.head {
+  position: relative;
+}
+
+.head-right {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--s4);
+  flex-shrink: 0;
+}
+
+.langtoggle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  padding-bottom: 1px;
+}
+
+.langtoggle button {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  color: var(--faint);
+  font-family: var(--mono);
+  font-size: var(--t1);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  transition: color 160ms var(--ease);
+}
+
+.langtoggle button:hover {
+  color: var(--text);
+}
+
+.langtoggle button[aria-pressed='true'] {
+  color: var(--gold);
+}
+
+.langtoggle button:focus-visible {
+  outline: 1px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.langtoggle-sep {
+  color: var(--ghost);
+  font-size: var(--t1);
+}
+
+/* Chinese is denser than Latin. The wide tracking that suits small caps English
+   makes CJK look sparse and pushes labels past their columns, so it is pulled
+   back wherever the type is set in caps. */
+[data-lang='zh'] .kicker,
+[data-lang='zh'] .kicker-b,
+[data-lang='zh'] .panel-title,
+[data-lang='zh'] .cap,
+[data-lang='zh'] .tab,
+[data-lang='zh'] .tabs-caption,
+[data-lang='zh'] .panel-note,
+[data-lang='zh'] .row .k,
+[data-lang='zh'] .statrow-cell .sub,
+[data-lang='zh'] .stat .sub,
+[data-lang='zh'] .log th,
+[data-lang='zh'] .barkey span,
+[data-lang='zh'] .regime-note,
+[data-lang='zh'] .epoch-meta,
+[data-lang='zh'] .meter-scale,
+[data-lang='zh'] .feed-row .k,
+[data-lang='zh'] .tag,
+[data-lang='zh'] .assume .k,
+[data-lang='zh'] .foot,
+[data-lang='zh'] .orient-btn,
+[data-lang='zh'] .flash {
+  letter-spacing: 0.04em;
+}
+
+[data-lang='zh'] .speeds button,
+[data-lang='zh'] .ticker-item {
+  letter-spacing: 0.03em;
+}
+
+/* The display serif has no CJK, so the regime plate is set in the text face. */
+[data-lang='zh'] .regime-name {
+  font-family: var(--mono);
+  font-size: var(--t3);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+}
+
+[data-lang='zh'] .cold-line.is-final {
+  font-family: var(--serif);
+}
+
+/* Denser glyphs need a little more line to breathe. */
+[data-lang='zh'] .hint-pop,
+[data-lang='zh'] .assume .n {
+  line-height: 1.85;
+}
+
+[data-lang='zh'] .narrator-line,
+[data-lang='zh'] .orient-line {
+  line-height: 1.8;
+}
+
+@media (max-width: 900px) {
+  /* The readout takes the full row and the toggle wraps beneath it, so a narrow
+     header never has to fit both on one line. */
+  .head-right {
+    width: 100%;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--s2);
+  }
+
+  .headstrip {
+    flex: 1 1 100%;
+    justify-content: space-between;
+    gap: var(--s2);
+  }
+
+  /* Parked in the empty space beside the title, so adding it costs the header
+     no height and nothing below the header moves. */
+  .langtoggle {
+    position: absolute;
+    top: var(--s2);
+    right: var(--s2);
+  }
+}

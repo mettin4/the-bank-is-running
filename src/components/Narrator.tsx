@@ -1,5 +1,6 @@
 import { narrate } from '../engine/narrator';
 import type { Snapshot } from '../engine/types';
+import { useI18n } from '../i18n';
 import { Hint } from './Hint';
 
 /**
@@ -8,13 +9,17 @@ import { Hint } from './Hint';
  * fold on the layout where the fold arrives soonest.
  */
 export function Narrator({ s, where }: { s: Snapshot; where: 'rail' | 'top' }) {
+  const { t } = useI18n();
+
   return (
-    <div className={where === 'rail' ? 'rail-block narrator narrator-rail' : 'narrator narrator-top'}>
+    <div
+      className={where === 'rail' ? 'rail-block narrator narrator-rail' : 'narrator narrator-top'}
+    >
       <div className="kicker">
-        NOW HAPPENING
-        <Hint text="A plain reading of the bank's current state. Every figure on this page follows from it." />
+        {t('narrator.title')}
+        <Hint text={t('narrator.hint')} />
       </div>
-      <p className="narrator-line">{narrate(s)}</p>
+      <p className="narrator-line">{t(narrate(s))}</p>
     </div>
   );
 }

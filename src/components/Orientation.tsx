@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useI18n } from '../i18n';
 
 const KEY = 'tbir.oriented.v1';
 
@@ -20,6 +21,7 @@ function remember() {
 
 /** Shown once, on a first visit, after the cold start has finished. */
 export function Orientation({ onDone }: { onDone: () => void }) {
+  const { t } = useI18n();
   const [out, setOut] = useState(false);
 
   useEffect(() => {
@@ -38,17 +40,19 @@ export function Orientation({ onDone }: { onDone: () => void }) {
   }
 
   return (
-    <div className={out ? 'orient is-out' : 'orient'} role="dialog" aria-modal="true" aria-label="Orientation">
+    <div
+      className={out ? 'orient is-out' : 'orient'}
+      role="dialog"
+      aria-modal="true"
+      aria-label={t('orient.label')}
+    >
       <div className="orient-card">
-        <div className="kicker">BEFORE YOU WATCH</div>
-        <p className="orient-line">
-          This is The Standard Reserve&apos;s economy, implemented early from whitepaper v0.1 and
-          running autonomously in your browser.
-        </p>
-        <p className="orient-line">One thousand banks. One pool. One signal.</p>
-        <p className="orient-line orient-line-last">Nobody can intervene. Not even you.</p>
+        <div className="kicker">{t('orient.kicker')}</div>
+        <p className="orient-line">{t('orient.line1')}</p>
+        <p className="orient-line">{t('orient.line2')}</p>
+        <p className="orient-line orient-line-last">{t('orient.line3')}</p>
         <button type="button" className="orient-btn" onClick={dismiss} autoFocus>
-          BEGIN OBSERVATION
+          {t('orient.button')}
         </button>
       </div>
     </div>

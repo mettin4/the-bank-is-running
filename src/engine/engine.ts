@@ -41,6 +41,7 @@ import {
   resolutionFee,
 } from './policy';
 import { mulberry32 } from './rng';
+import type { EventArgs, EventKey } from './events';
 import type {
   Charter,
   EpochRecord,
@@ -194,8 +195,8 @@ export class Engine {
     this.seedBank();
     this.licenseStart = licenseFloor(this.m, this.totalBranches) * LICENSE_OPEN_MULTIPLE;
     this.priceSeries.push(poolPrice(this.pool));
-    this.pushEvent('SYSTEM', 'GENESIS LIQUIDITY SEEDED · 100,000,000 $STANDARD PAIRED', 0);
-    this.pushEvent('SYSTEM', `${GENESIS_CHARTERS} FOUNDING CHARTERS ISSUED · ONE BRANCH EACH`, 0);
+    this.pushEvent('SYSTEM', 'genesisSeeded', {}, 0);
+    this.pushEvent('SYSTEM', 'foundingCharters', { n: GENESIS_CHARTERS }, 0);
   }
 
   private seedBank() {
@@ -349,7 +350,7 @@ export class Engine {
       this.runHoursLeft -= 1;
       if (this.runHoursLeft === 0) {
         this.run = false;
-        this.pushEvent('EXIT', 'RUN SUBSIDED · THE DOOR WAS PRICED, NEVER CLOSED', 0);
+        this.pushEvent('EXIT', 'runSubsided', {}, 0);
       }
     }
 
@@ -363,13 +364,13 @@ export class Engine {
     this.severity = 0.78 + this.rnd() * 0.9;
 
     const bullish = this.sentiment === 'ACCUMULATION' || this.sentiment === 'EXPANSION';
-    this.pushEvent('SYSTEM', `MARKET REGIME · ${this.sentiment}`, bullish ? 1 : -1);
+    this.pushEvent('SYSTEM', 'marketRegime', { sentiment: this.sentiment }, bullish ? 1 : -1);
 
     if (this.sentiment === 'CAPITULATION' && this.rnd() < 0.55) {
       this.run = true;
       this.runHoursLeft = 40 + Math.floor(this.rnd() * 70);
       this.severity = Math.max(this.severity, 1.55);
-      this.pushEvent('EXIT', 'EXIT VOLUME ACCELERATING · RESOLUTION FEE REPRICING THE DOOR', -1, 'RUN');
+      this.pushEvent('EXIT', 'runStarting', {}, -1, 'RUN');
     }
   }
 
@@ -468,7 +469,7 @@ export class Engine {
     this.burns += bought;
     this.burnBuyback += bought;
     if (bought > 1 && this.hour % 8 === 0) {
-      this.pushEvent('BURN', `BUYBACK TICK · ${fmt(bought)} $STANDARD BOUGHT AND BURNED`, -1);
+      this.pushEvent('BURN', 'buybackTick', { amount: bought }, -1);
     }
   }
 
@@ -537,7 +538,7 @@ export class Engine {
     this.charterLastSale = price;
     this.charterLastSaleAt = this.hourInEpoch / HOURS_PER_EPOCH;
     this.routeProtocolEth(price);
-    this.pushEvent('CHARTER', `CHARTER #${pad(c.id)} SOLD AT AUCTION · ${price.toFixed(3)} ETH`, 1);
+    this.pushEvent('CHARTER', 'charterSold', { id: c.id, eth: price }, 1);
     return true;
   }
 
@@ -592,15 +593,12 @@ export class Engine {
     this.recordWithdrawal(gross);
 
     if (dissolved) {
-      this.pushEvent(
-        'EXIT',
-        `CHARTER #${pad(c.id)} DISSOLVED · LAST BRANCH RETIRED · ${fmt(gross)} REALIZED`,
-        -1,
-      );
+      this.pushEvent('EXIT', 'charterDissolved', { id: c.id, amount: gross }, -1);
     } else if (gross > 60_000 || feeRate > 0.09) {
       this.pushEvent(
         'EXIT',
-        `CHARTER #${pad(c.id)} RETIRED ${k} BRANCH${k > 1 ? 'ES' : ''} · ${fmt(gross)} AT ${(feeRate * 100).toFixed(2)}% RESOLUTION FEE`,
+        'charterRetired',
+        { id: c.id, branches: k, amount: gross, feeRate },
         -1,
       );
     }
@@ -671,7 +669,8 @@ export class Engine {
 
     this.pushEvent(
       'DORMANCY',
-      `CHARTER #${pad(g.id)} REVOKED · DORMANT ${DORMANCY_DAYS}D · ${shuttered} BRANCH${shuttered > 1 ? 'ES' : ''} SHUTTERED`,
+      'charterRevoked',
+      { id: g.id, days: DORMANCY_DAYS, branches: shuttered },
       -1,
       'DORMANCY',
     );
@@ -835,14 +834,7 @@ export class Engine {
     const next: Regime = this.netFlowEpoch > 0 ? 'EXPANSION' : 'CONTRACTION';
     if (next === this.regime) return;
     this.regime = next;
-    this.pushEvent(
-      'POLICY',
-      next === 'EXPANSION'
-        ? 'FEE ROUTING FLIPPED · EXPANSION VAULT · HARD RESERVE ASSETS'
-        : 'FEE ROUTING FLIPPED · CONTRACTION VAULT · BUYBACK AND BURN',
-      next === 'EXPANSION' ? 1 : -1,
-      'FLIP',
-    );
+    this.pushEvent('POLICY', 'feeRoutingFlipped', { regime: next }, next === 'EXPANSION' ? 1 : -1, 'FLIP');
   }
 
   /* ------------------------------------------------------------- epoch ---- */
@@ -857,18 +849,9 @@ export class Engine {
     const next = nextMultiplier(this.m, signal);
 
     if (next < this.m) {
-      this.pushEvent(
-        'POLICY',
-        `RATE CUT · m ${this.m.toFixed(2)} TO ${next.toFixed(2)} · SIGNAL ${signed(signal)} ETH`,
-        -1,
-        'CUT',
-      );
+      this.pushEvent('POLICY', 'rateCut', { from: this.m, to: next, signal }, -1, 'CUT');
     } else if (next > this.m) {
-      this.pushEvent(
-        'POLICY',
-        `RATE RAISE EARNED · m ${this.m.toFixed(2)} TO ${next.toFixed(2)} · SIGNAL ${signed(signal)} ETH`,
-        1,
-      );
+      this.pushEvent('POLICY', 'rateRaise', { from: this.m, to: next, signal }, 1);
     }
     const mBefore = this.m;
     this.m = next;
@@ -877,11 +860,7 @@ export class Engine {
       const oz = this.expansionVault / GOLD_ETH_PER_OZ;
       this.reserveOz += oz;
       if (oz > 0.25) {
-        this.pushEvent(
-          'RESERVE',
-          `HARD RESERVE +${oz.toFixed(2)} OZ · ${this.expansionVault.toFixed(2)} ETH CONVERTED`,
-          1,
-        );
+        this.pushEvent('RESERVE', 'reserveAdded', { oz, eth: this.expansionVault }, 1);
       }
       this.expansionVault = 0;
     }
@@ -910,16 +889,13 @@ export class Engine {
     });
     if (this.epochs.length > MAX_EPOCHS) this.epochs.shift();
 
-    this.pushEvent(
-      'EPOCH',
-      `EPOCH ${pad(this.epoch)} CLOSED · NET FLOW ${signed(netFlow)} ETH · ${netFlow > 0 ? 'EXPANSION' : 'CONTRACTION'}`,
-      netFlow > 0 ? 1 : -1,
-    );
+    this.pushEvent('EPOCH', 'epochClosed', { epoch: this.epoch, netFlow }, netFlow > 0 ? 1 : -1);
 
     if (this.licenseSoldToday > 0) {
       this.pushEvent(
         'LICENSE',
-        `LICENSE AUCTION CLOSED · ${this.licenseSoldToday}/${LICENSES_PER_DAY} SOLD · ${fmt(this.licenseLastSale)} LAST · ALL BURNED`,
+        'licenseAuctionClosed',
+        { sold: this.licenseSoldToday, cap: LICENSES_PER_DAY, last: this.licenseLastSale },
         0,
       );
     }
@@ -968,12 +944,7 @@ export class Engine {
     const feeNow = this.resolutionFeeNow;
     if (!this.feeAlarm && feeNow > 0.1) {
       this.feeAlarm = true;
-      this.pushEvent(
-        'EXIT',
-        `RESOLUTION FEE ABOVE 10% · ${(feeNow * 100).toFixed(2)}% AT THE DOOR · HALF BURNED, HALF TO THE STAYERS`,
-        -1,
-        'FEE',
-      );
+      this.pushEvent('EXIT', 'resolutionFeeHigh', { feeRate: feeNow }, -1, 'FEE');
     } else if (this.feeAlarm && feeNow < 0.08) {
       this.feeAlarm = false;
     }
@@ -995,9 +966,10 @@ export class Engine {
 
   /* ------------------------------------------------------------ events ---- */
 
-  private pushEvent(
+  private pushEvent<K extends EventKey>(
     kind: EventKind,
-    text: string,
+    key: K,
+    args: EventArgs[K],
     tone: -1 | 0 | 1,
     loudClass?: LoudClass,
   ) {
@@ -1006,7 +978,8 @@ export class Engine {
       hour: this.hour,
       epoch: this.epoch,
       kind,
-      text,
+      key,
+      args,
       tone,
       loud: loudClass !== undefined,
       loudClass,
@@ -1117,16 +1090,4 @@ export class Engine {
       identityDrift: this.identityDrift(),
     };
   }
-}
-
-function fmt(n: number): string {
-  return Math.round(n).toLocaleString('en-US');
-}
-
-function pad(n: number): string {
-  return String(n).padStart(4, '0');
-}
-
-function signed(n: number): string {
-  return `${n >= 0 ? '+' : '-'}${Math.abs(n).toFixed(2)}`;
 }

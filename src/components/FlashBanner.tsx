@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { LoudClass, ProtocolEvent, Snapshot } from '../engine/types';
+import { useI18n } from '../i18n';
+import type { DictKey } from '../i18n/en';
 
 const HOLD_MS = 4000;
 /** Never replaced before it has been on screen long enough to finish reading. */
@@ -18,6 +20,7 @@ const AT_SPEED: Record<'slow' | 'fast', Set<LoudClass>> = {
 };
 
 export function FlashBanner({ s }: { s: Snapshot }) {
+  const { t, ev } = useI18n();
   const [shown, setShown] = useState<ProtocolEvent | null>(null);
   const lastId = useRef(-1);
   const shownAt = useRef(0);
@@ -57,8 +60,8 @@ export function FlashBanner({ s }: { s: Snapshot }) {
   return (
     <div className={`flash-slot is-on tone-${tone}`}>
       <div className="flash" role="status">
-        <span className="kicker">{shown.kind}</span>
-        <span className="flash-text">{shown.text}</span>
+        <span className="kicker">{t(`kind.${shown.kind}` as DictKey)}</span>
+        <span className="flash-text">{ev(shown)}</span>
       </div>
     </div>
   );

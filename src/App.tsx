@@ -4,7 +4,10 @@ import { useProtocol } from './engine/store';
 import { ColdStart } from './components/ColdStart';
 import { FlashBanner } from './components/FlashBanner';
 import { HeadStrip } from './components/HeadStrip';
+import { LangToggle } from './components/LangToggle';
 import { Orientation, orientationSeen } from './components/Orientation';
+import { useI18n } from './i18n';
+import type { AssumedKey, DictKey } from './i18n/en';
 import { Narrator } from './components/Narrator';
 import { Rail } from './components/Rail';
 import { StatRow } from './components/StatRow';
@@ -23,6 +26,7 @@ import {
 } from './components/panels';
 
 export default function App() {
+  const { t, tv, assumed } = useI18n();
   const mainRef = useRef<HTMLElement>(null);
   const [cold, setCold] = useState(true);
   const [oriented, setOriented] = useState(() => orientationSeen());
@@ -43,12 +47,12 @@ export default function App() {
         <header className="head">
           <div className="head-id">
             <h1 className="head-title">THE BANK IS RUNNING</h1>
-            <p className="head-sub">
-              THE STANDARD RESERVE, IMPLEMENTED EARLY FROM WHITEPAPER V0.1 · UNOFFICIAL · NOT
-              AFFILIATED
-            </p>
+            <p className="head-sub">{t('app.subtitle')}</p>
           </div>
-          <HeadStrip s={s} />
+          <div className="head-right">
+            <HeadStrip s={s} />
+            <LangToggle />
+          </div>
         </header>
 
         <div className="body">
@@ -93,21 +97,19 @@ export default function App() {
                 <EventFeed s={s} />
                 <details className="disclose">
                   <summary>
-                    <span className="kicker-b">ASSUMED PARAMETERS</span>
+                    <span className="kicker-b">{t('assumed.title')}</span>
                     <span className="chev">›</span>
                   </summary>
                   <div className="disclose-body">
                     <p className="assume n" style={{ margin: '0 0 var(--s3)' }}>
-                      The whitepaper redacts every launch value until launch. The figures below are
-                      reasoned placeholders, not protocol truth. Final parameters will be announced
-                      by the protocol.
+                      {t('assumed.intro')}
                     </p>
                     <div className="assume-grid">
                       {ASSUMED_PARAMS.map((p) => (
-                        <div className="assume" key={p.label}>
-                          <div className="k">{p.label}</div>
-                          <div className="v">{p.value}</div>
-                          <div className="n">{p.note}</div>
+                        <div className="assume" key={p.id}>
+                          <div className="k">{assumed[p.id as AssumedKey].label}</div>
+                          <div className="v">{tv(`av.${p.id}` as DictKey, p.vars)}</div>
+                          <div className="n">{assumed[p.id as AssumedKey].note}</div>
                         </div>
                       ))}
                     </div>
@@ -122,14 +124,14 @@ export default function App() {
                 target="_blank"
                 rel="noreferrer noopener"
               >
-                THE STANDARD RESERVE WHITEPAPER
+                {t('foot.whitepaper')}
               </a>
               <span className="foot-sep">·</span>
-              $STANDARD IS EXPERIMENTAL. NOTHING HERE IS INVESTMENT ADVICE.
+              {t('foot.experimental')}
               <span className="foot-sep">·</span>
-              UNOFFICIAL, NOT AFFILIATED WITH THE PROTOCOL.
+              {t('foot.unofficial')}
               <span className="foot-sep">·</span>
-              BUILT BY @0XMETO_
+              {t('foot.built')}
             </footer>
           </main>
         </div>

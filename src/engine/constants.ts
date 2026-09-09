@@ -73,82 +73,41 @@ export const CHARTER_FLOOR_ETH = 0.05;
 export const GENESIS_POOL_ETH = 400;
 export const GOLD_ETH_PER_OZ = 0.87;
 
-/** Assumption ledger rendered by the ASSUMED PARAMETERS panel. */
+/**
+ * Assumption ledger rendered by the ASSUMED PARAMETERS panel. Only the numbers
+ * live here, because they are computed from the constants above. The label, the
+ * value's wording and the reasoning are copy, and live in the dictionaries.
+ */
 export interface AssumedParam {
-  label: string;
-  value: string;
-  note: string;
+  id: string;
+  vars: Record<string, string | number>;
 }
 
 export const ASSUMED_PARAMS: AssumedParam[] = [
+  { id: 'BASE_ISSUANCE', vars: { v: BASE_ISSUANCE_PER_DAY.toLocaleString('en-US') } },
   {
-    label: 'BASE ISSUANCE',
-    value: `${BASE_ISSUANCE_PER_DAY.toLocaleString('en-US')} / DAY`,
-    note: 'Redacted in section 05. Sized so the 900,000,000 issuance budget lasts roughly a decade at full rate.',
+    id: 'MULTIPLIER',
+    vars: { lo: M_FLOOR.toFixed(2), hi: M_CEILING.toFixed(2), launch: M_LAUNCH.toFixed(2) },
   },
+  { id: 'RATE_RAISE', vars: { v: M_RAISE_STEP.toFixed(2) } },
+  { id: 'RATE_CUT', vars: { v: M_CUT_STEP.toFixed(2) } },
+  { id: 'EPOCH_LENGTH', vars: { v: HOURS_PER_EPOCH } },
+  { id: 'TRADING_FEE', vars: { v: `${(TRADING_FEE_BPS / 100).toFixed(2)}%` } },
   {
-    label: 'MULTIPLIER m',
-    value: `${M_FLOOR.toFixed(2)} - ${M_CEILING.toFixed(2)}, LAUNCH ${M_LAUNCH.toFixed(2)}`,
-    note: 'Range is stated on the protocol site. The launch value is not.',
+    id: 'RESOLUTION_FEE',
+    vars: {
+      lo: `${(RESOLUTION_FEE_FLOOR * 100).toFixed(1)}%`,
+      hi: `${(RESOLUTION_FEE_CEILING * 100).toFixed(0)}%`,
+    },
   },
+  { id: 'LICENSE_FLOOR', vars: { v: LICENSE_FLOOR_DAYS_OF_YIELD } },
+  { id: 'CHARTER_FLOOR', vars: { v: CHARTER_FLOOR_ETH } },
   {
-    label: 'RATE RAISE',
-    value: `+${M_RAISE_STEP.toFixed(2)} / POSITIVE EPOCH`,
-    note: 'Redacted. Chosen so a sustained inflow needs 5 epochs to reach the ceiling from launch.',
+    id: 'GENESIS_POOL',
+    vars: { std: GENESIS_POL.toLocaleString('en-US'), eth: GENESIS_POOL_ETH },
   },
-  {
-    label: 'RATE CUT',
-    value: `-${M_CUT_STEP.toFixed(2)} / NEGATIVE EPOCH`,
-    note: 'Redacted. Three times the raise step, honoring "cuts are immediate, raises must be earned".',
-  },
-  {
-    label: 'EPOCH LENGTH',
-    value: `${HOURS_PER_EPOCH} PROTOCOL HOURS`,
-    note: 'Redacted. The document speaks in days and in "epochs", so one epoch is read as one day.',
-  },
-  {
-    label: 'TRADING FEE',
-    value: `${(TRADING_FEE_BPS / 100).toFixed(2)}% IN ETH`,
-    note: 'Redacted. Charged on both sides of every swap, as section 11 requires.',
-  },
-  {
-    label: 'RESOLUTION FEE',
-    value: `${(RESOLUTION_FEE_FLOOR * 100).toFixed(1)}% FLOOR / ${(RESOLUTION_FEE_CEILING * 100).toFixed(0)}% CEILING`,
-    note: `Redacted. Quadratic between the two, saturating when ${(RESOLUTION_FEE_SATURATION * 100).toFixed(0)}% of the bank exits inside 7 days.`,
-  },
-  {
-    label: 'LICENSE FLOOR',
-    value: `${LICENSE_FLOOR_DAYS_OF_YIELD} DAYS OF ONE BRANCH YIELD`,
-    note: 'Stated as an aside in section 08 and read literally: floor = base issuance x m / total branches x 2.',
-  },
-  {
-    label: 'CHARTER FLOOR',
-    value: `${CHARTER_FLOOR_ETH} ETH`,
-    note: 'Section 08 calls this an admin-set reserve price and gives no number.',
-  },
-  {
-    label: 'GENESIS POOL',
-    value: `${GENESIS_POL.toLocaleString('en-US')} / ${GENESIS_POOL_ETH} ETH`,
-    note: 'The token side is specified. The ETH the team pairs against it is not.',
-  },
-  {
-    label: 'LICENSE SETTLEMENT',
-    value: 'MINT AND BURN IN ONE STEP',
-    note: 'Licenses are paid in $STANDARD and burned, but tokens only exist after a withdrawal. The accrued ledger balance is therefore minted and burned in the same transaction, which is why cumulative mints and cumulative burns both move while circulating supply does not.',
-  },
-  {
-    label: 'DORMANT BANKERS',
-    value: `${(DORMANT_AGENT_RATE * 100).toFixed(0)}% OF THE BANK, SPREAD OVER TIME`,
-    note: 'Section 10 says staying active is free and that a zero-cost check-in exists, so an engaged banker never trips. Only lost keys and abandoned wallets do, and how many of those there are is not specified.',
-  },
-  {
-    label: 'REVOCATION SPLIT',
-    value: '35% BURN / 35% STAYERS / 30% GHOST',
-    note: 'Section 10 gives a 70% fee, a 2% bounty and a 30% return, which sums past 100%. The bounty is read as coming out of the stayers half.',
-  },
-  {
-    label: 'HARD RESERVE',
-    value: `${GOLD_ETH_PER_OZ} ETH / OZ`,
-    note: 'The expansion vault buys tokenized gold. The rate here is fixed for legibility.',
-  },
+  { id: 'LICENSE_SETTLEMENT', vars: {} },
+  { id: 'DORMANT_AGENTS', vars: { v: `${(DORMANT_AGENT_RATE * 100).toFixed(0)}%` } },
+  { id: 'REVOCATION_SPLIT', vars: { a: '35%', b: '35%', c: '30%' } },
+  { id: 'HARD_RESERVE', vars: { v: GOLD_ETH_PER_OZ } },
 ];

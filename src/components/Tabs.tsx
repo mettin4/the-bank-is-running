@@ -1,32 +1,45 @@
+import type { DictKey } from '../i18n/en';
+import { useI18n } from '../i18n';
+
 export const TABS = ['OVERVIEW', 'SUPPLY', 'AUCTIONS', 'DEFENCE', 'LOG'] as const;
 export type Tab = (typeof TABS)[number];
 
-const CAPTION: Record<Tab, string> = {
-  OVERVIEW: 'THE SIGNAL AND WHAT THE BANK DID ABOUT IT',
-  SUPPLY: 'WHAT EXISTS, AND WHAT HAS BEEN DESTROYED',
-  AUCTIONS: 'HOW BRANCHES AND SEATS ARE PRICED',
-  DEFENCE: 'WHAT HAPPENS WHEN CAPITAL LEAVES',
-  LOG: 'THE RECORD',
+const LABEL: Record<Tab, DictKey> = {
+  OVERVIEW: 'tab.overview',
+  SUPPLY: 'tab.supply',
+  AUCTIONS: 'tab.auctions',
+  DEFENCE: 'tab.defence',
+  LOG: 'tab.log',
+};
+
+const CAPTION: Record<Tab, DictKey> = {
+  OVERVIEW: 'tabcap.overview',
+  SUPPLY: 'tabcap.supply',
+  AUCTIONS: 'tabcap.auctions',
+  DEFENCE: 'tabcap.defence',
+  LOG: 'tabcap.log',
 };
 
 export function Tabs({ value, onChange }: { value: Tab; onChange: (t: Tab) => void }) {
+  const { t } = useI18n();
+
   return (
     <div className="tabs">
-      <nav className="tabs-bar" role="tablist" aria-label="Sections">
-        {TABS.map((t) => (
+      <nav className="tabs-bar" role="tablist" aria-label={t('tab.sections')}>
+        {TABS.map((tab) => (
           <button
-            key={t}
+            key={tab}
             type="button"
             role="tab"
-            aria-selected={value === t}
+            aria-selected={value === tab}
             className="tab"
-            onClick={() => onChange(t)}
+            onClick={() => onChange(tab)}
           >
-            {t}
+            {t(LABEL[tab])}
           </button>
         ))}
       </nav>
-      <span className="tabs-caption">{CAPTION[value]}</span>
+      <span className="tabs-caption">{t(CAPTION[value])}</span>
     </div>
   );
 }

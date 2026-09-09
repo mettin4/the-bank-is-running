@@ -1,6 +1,7 @@
 import { M_CEILING, M_FLOOR, RESOLUTION_FEE_CEILING, RESOLUTION_FEE_FLOOR, RESOLUTION_FEE_SATURATION } from '../engine/constants';
 import { dutchPrice, resolutionFee } from '../engine/policy';
 import type { EpochRecord } from '../engine/types';
+import { useI18n } from '../i18n';
 
 /* ------------------------------------------------------------------ hero -- */
 
@@ -18,6 +19,7 @@ interface HeroProps {
  * Two plots rather than two axes on one, so neither scale lies about the other.
  */
 export function HeroChart({ epochs, liveEpoch, liveFlow, liveM, width, height }: HeroProps) {
+  const { t } = useI18n();
   const PAD_L = 52;
   const PAD_R = 8;
   const PAD_T = 12;
@@ -85,7 +87,7 @@ export function HeroChart({ epochs, liveEpoch, liveFlow, liveM, width, height }:
       width={width}
       height={height}
       role="img"
-      aria-label="Net ETH flow per epoch above, the policy multiplier below"
+      aria-label={t('hero.alt')}
     >
       {/* strip one: net ETH flow */}
       <line className="c-grid" x1={PAD_L} y1={aTop} x2={PAD_L + innerW} y2={aTop} />
@@ -102,7 +104,7 @@ export function HeroChart({ epochs, liveEpoch, liveFlow, liveM, width, height }:
         {`-${maxDn.toFixed(0)}`}
       </text>
       <text className="c-strip" x={PAD_L} y={aTop - 3}>
-        NET ETH FLOW
+        {t('hero.netFlow')}
       </text>
 
       {bars.map((b, i) => {
@@ -136,7 +138,7 @@ export function HeroChart({ epochs, liveEpoch, liveFlow, liveM, width, height }:
         {M_FLOOR.toFixed(2)}
       </text>
       <text className="c-strip" x={PAD_L} y={bTop - 3}>
-        MULTIPLIER m
+        {t('hero.multiplier')}
       </text>
 
       <path className="c-line" d={d} stroke="var(--gold)" />
@@ -197,6 +199,7 @@ export function AuctionCurve({
   soldOut = false,
   closedAt = 0,
 }: AuctionProps) {
+  const { t } = useI18n();
   const PAD_T = 8;
   const PAD_B = 16;
   const PAD_L = 2;
@@ -227,7 +230,7 @@ export function AuctionCurve({
       width={width}
       height={height}
       role="img"
-      aria-label={soldOut ? 'Dutch auction, closed for the day' : 'Dutch auction price decay across the day'}
+      aria-label={soldOut ? t('curve.altClosed') : t('curve.altLive')}
     >
       <line className="c-grid" x1={PAD_L} y1={y(floor)} x2={PAD_L + w} y2={y(floor)} />
       <polyline
@@ -240,13 +243,13 @@ export function AuctionCurve({
       {soldOut ? <circle cx={cx} cy={cy} r={6.5} fill="none" stroke={tone} strokeWidth={1} opacity={0.5} /> : null}
       <circle className="c-dot" cx={cx} cy={cy} r={3.5} fill={tone} />
       <text className="c-label" x={PAD_L} y={height - 3}>
-        00H
+        {t('curve.open')}
       </text>
       <text className="c-label" x={PAD_L + w} y={height - 3} textAnchor="end">
-        24H
+        {t('curve.close')}
       </text>
       <text className="c-label" x={PAD_L + w} y={y(floor) - 5} textAnchor="end">
-        FLOOR
+        {t('curve.floor')}
       </text>
     </svg>
   );
@@ -262,6 +265,7 @@ interface ExitProps {
 
 /** The quadratic fee curve, with the bank's live position marked on it. */
 export function ExitCurve({ pressure, width, height }: ExitProps) {
+  const { t } = useI18n();
   const PAD_T = 10;
   const PAD_B = 18;
   const PAD_L = 34;
@@ -282,10 +286,10 @@ export function ExitCurve({ pressure, width, height }: ExitProps) {
   }
 
   const marks: [string, number][] = [
-    ['QUIET', 0.02],
-    ['ELEVATED', 0.1],
-    ['HEAVY', 0.2],
-    ['RUN', RESOLUTION_FEE_SATURATION],
+    [t('exit.quiet'), 0.02],
+    [t('exit.elevated'), 0.1],
+    [t('exit.heavy'), 0.2],
+    [t('exit.run'), RESOLUTION_FEE_SATURATION],
   ];
 
   const cx = x(pressure);
@@ -293,7 +297,7 @@ export function ExitCurve({ pressure, width, height }: ExitProps) {
   const hot = pressure >= 0.17;
 
   return (
-    <svg className="chart" width={width} height={height} role="img" aria-label="Resolution fee against seven day exit pressure">
+    <svg className="chart" width={width} height={height} role="img" aria-label={t('exit.curveAlt')}>
       <line className="c-grid" x1={PAD_L} y1={y(RESOLUTION_FEE_CEILING)} x2={PAD_L + w} y2={y(RESOLUTION_FEE_CEILING)} />
       <line className="c-axis" x1={PAD_L} y1={y(RESOLUTION_FEE_FLOOR)} x2={PAD_L + w} y2={y(RESOLUTION_FEE_FLOOR)} />
 
