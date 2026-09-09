@@ -154,6 +154,10 @@ export const en = {
   'cha.note': 'PAID IN ETH · ROUTES TO THE FEE ENGINE',
   'cha.hint':
     'A charter is a seat at the bank. New ones are sold for ETH on the same falling price curve, and how many are offered each day is a policy decision that starts at zero.',
+  'cha.todaysAuction': "TODAY'S AUCTION",
+  'cha.soldOut': 'SOLD OUT',
+  'cha.closedAt': 'CLOSED AT {v}',
+  'cha.priceNow': 'PRICE NOW',
   'cha.noSaleSub': 'POLICY HAS NOT ENABLED A SALE',
   'cha.noSale': 'NO SALE',
   'cha.seatsToday': 'SEATS TODAY',

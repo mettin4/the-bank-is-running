@@ -279,17 +279,17 @@ export function CharterAuctionPanel({ s }: { s: Snapshot }) {
     >
       <div className="grid-2" style={{ gap: 'var(--s3)' }}>
         {a.soldOut ? (
-          <Stat label={t('lic.todaysAuction')} sub={tv('lic.closedAt', { v: `${dec(a.lastSale, 3)} ETH` })}>
-            <span className="faint">{t('lic.soldOut')}</span>
+          <Stat label={t('cha.todaysAuction')} sub={tv('cha.closedAt', { v: `${dec(a.lastSale, 3)} ETH` })}>
+            <span className="faint">{t('cha.soldOut')}</span>
           </Stat>
         ) : open ? (
-          <Stat label={t('lic.priceNow')} sub={tv('lic.floor', { v: `${dec(a.floor, 2)} ETH` })}>
+          <Stat label={t('cha.priceNow')} sub={tv('lic.floor', { v: `${dec(a.floor, 2)} ETH` })}>
             <span className="gold">
               <Num value={a.price} kind="dec3" tau={120} />
             </span>
           </Stat>
         ) : (
-          <Stat label={t('lic.priceNow')} sub={t('cha.noSaleSub')}>
+          <Stat label={t('cha.priceNow')} sub={t('cha.noSaleSub')}>
             <span className="faint">{t('cha.noSale')}</span>
           </Stat>
         )}

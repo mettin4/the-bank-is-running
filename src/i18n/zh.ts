@@ -16,7 +16,7 @@ const mood: Record<Sentiment, string> = {
 };
 
 export const zh: Dict = {
-  'app.subtitle': 'THE STANDARD RESERVE · 依据白皮书 V0.1 提前实现 · 非官方 · 无隶属关系',
+  'app.subtitle': 'THE STANDARD RESERVE · 依据白皮书 V0.1 提前实现 · 非官方 · 与官方无关联',
   'app.langLabel': '语言',
 
   'head.epoch': 'EPOCH',
@@ -99,7 +99,7 @@ export const zh: Dict = {
   'supply.title': '供应恒等式',
   'supply.note': '白皮书 3.1',
   'supply.hint':
-    '只有银行家提取时代币才会诞生。其余全部是账本记录,因此流通量是一张收据,记录已被真正取走的部分。',
+    '代币只有在银行家提取时才会诞生。其余全部是账本记录,因此流通量是一张收据,记录已被真正取走的部分。',
   'supply.genesis': '创世流动性',
   'supply.mints': '铸造',
   'supply.atWithdrawal': '提取铸造',
@@ -144,6 +144,10 @@ export const zh: Dict = {
   'cha.note': '以 ETH 支付 · 进入手续费引擎',
   'cha.hint':
     '一张牌照就是银行里的一个席位。新牌照按同一条下行曲线以 ETH 出售,每日投放数量由政策决定,初始为零。',
+  'cha.todaysAuction': '今日拍卖',
+  'cha.soldOut': '已售罄',
+  'cha.closedAt': '收于 {v}',
+  'cha.priceNow': '当前价',
   'cha.noSaleSub': '政策尚未开放发售',
   'cha.noSale': '无发售',
   'cha.seatsToday': '今日席位',
@@ -255,7 +259,7 @@ export const zh: Dict = {
 
   'foot.whitepaper': 'THE STANDARD RESERVE 白皮书',
   'foot.experimental': '$STANDARD 属实验性质。此处内容不构成投资建议。',
-  'foot.unofficial': '非官方,与该协议无隶属关系。',
+  'foot.unofficial': '非官方 · 与官方无关联',
   'foot.built': 'BUILT BY @0XMETO_',
 
   'av.BASE_ISSUANCE': '{v} / 天',
