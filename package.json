@@ -26,6 +26,5 @@
     "vite": "^5.4.11",
     "vitest": "^2.1.8"
   },
-  "description": "The Standard Reserve's economy, implemented early from whitepaper v0.1 and running autonomously in the browser. Unofficial.",
-  "license": "MIT"
+  "description": "The Standard Reserve's economy, implemented early from whitepaper v0.1 and running autonomously in the browser. Unofficial."
 }
