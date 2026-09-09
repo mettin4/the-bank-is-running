@@ -19,11 +19,14 @@ import { AuctionCurve, ExitCurve, HeroChart, Spark } from './charts';
 import { Hint } from './Hint';
 import { Num } from './Num';
 import { Panel, Row, Stat } from './Panel';
+import { useI18n } from '../i18n';
+import type { DictKey } from '../i18n/en';
 import { useMeasure } from './useMeasure';
 
 /* ---------------------------------------------------------------- hero --- */
 
 export function Hero({ s }: { s: Snapshot }) {
+  const { t } = useI18n();
   const [ref, w] = useMeasure<HTMLDivElement>();
   const positive = s.netFlowEpoch >= 0;
 
@@ -32,8 +35,8 @@ export function Hero({ s }: { s: Snapshot }) {
       <div className="hero-head">
         <div>
           <div className="kicker">
-            NET ETH FLOW
-            <Hint text="Every buy puts ETH into the pool and every sell takes it out. The difference across an epoch is the only input the bank has." />
+            {t('hero.netFlow')}
+            <Hint text={t('hero.netFlowHint')} />
           </div>
           <span className={positive ? 'hero-figure pos' : 'hero-figure neg'}>
             <Num value={s.netFlowEpoch} kind="signedEth" tau={150} />
@@ -41,8 +44,8 @@ export function Hero({ s }: { s: Snapshot }) {
         </div>
         <div>
           <div className="kicker">
-            POLICY RATE
-            <Hint text="How much $STANDARD the bank issues, as a multiple of its base rate. Cuts land at once, raises are earned one epoch at a time." />
+            {t('hero.policyRate')}
+            <Hint text={t('hero.policyRateHint')} />
           </div>
           <span className="hero-figure gold">
             <Num value={s.m} kind="mult" tau={240} />
@@ -50,13 +53,13 @@ export function Hero({ s }: { s: Snapshot }) {
         </div>
         <div className="hero-legend">
           <span className="legend-item">
-            <i className="swatch pos" /> INFLOW EPOCH
+            <i className="swatch pos" /> {t('hero.inflowEpoch')}
           </span>
           <span className="legend-item">
-            <i className="swatch neg" /> OUTFLOW EPOCH
+            <i className="swatch neg" /> {t('hero.outflowEpoch')}
           </span>
           <span className="legend-item">
-            <i className="swatch" /> MULTIPLIER m
+            <i className="swatch" /> {t('hero.multiplier')}
           </span>
         </div>
       </div>
@@ -70,10 +73,7 @@ export function Hero({ s }: { s: Snapshot }) {
           height={320}
         />
       </div>
-      <div className="cap">
-        SIXTY EPOCHS. BARS ARE NET ETH FLOW, THE LINE BENEATH IS THE ISSUANCE MULTIPLIER, AND EACH
-        RED TICK IS AN EPOCH THE RATE WAS CUT.
-      </div>
+      <div className="cap">{t('hero.caption')}</div>
     </section>
   );
 }
@@ -81,62 +81,63 @@ export function Hero({ s }: { s: Snapshot }) {
 /* -------------------------------------------------------------- supply --- */
 
 export function SupplyPanel({ s }: { s: Snapshot }) {
+  const { t, tv } = useI18n();
   const [ref, w] = useMeasure<HTMLDivElement>();
   const mints = s.mintedWithdrawal + s.mintedSettlement;
 
   return (
     <Panel
-      title="SUPPLY IDENTITY"
-      note="WHITEPAPER 3.1"
-      hint="Tokens only come into existence when a banker withdraws. Everything else is a ledger entry, so circulating supply is a receipt of what has actually been taken out of the bank."
+      title={t('supply.title')}
+      note={t('supply.note')}
+      hint={t('supply.hint')}
     >
       <div className="identity">
-        <span className="l">GENESIS LIQUIDITY</span>
+        <span className="l">{t('supply.genesis')}</span>
         <span className="r">{int(GENESIS_POL)}</span>
         <span className="l">
-          <span className="op">+</span> MINTS
+          <span className="op">+</span> {t('supply.mints')}
         </span>
         <span className="r">
           <Num value={mints} kind="int" tau={160} />
         </span>
         <span className="l faint" style={{ paddingLeft: 12 }}>
-          AT WITHDRAWAL
+          {t('supply.atWithdrawal')}
         </span>
         <span className="r faint">
           <Num value={s.mintedWithdrawal} kind="int" tau={160} />
         </span>
         <span className="l faint" style={{ paddingLeft: 12 }}>
-          SETTLED AND BURNED
+          {t('supply.settledBurned')}
         </span>
         <span className="r faint">
           <Num value={s.mintedSettlement} kind="int" tau={160} />
         </span>
         <span className="l">
-          <span className="op">-</span> CUMULATIVE BURNS
+          <span className="op">-</span> {t('supply.cumulativeBurns')}
         </span>
         <span className="r neg">
           <Num value={s.burns} kind="int" tau={160} />
         </span>
-        <span className="l sum">CIRCULATING</span>
+        <span className="l sum">{t('supply.circulating')}</span>
         <span className="r sum">
           <Num value={s.circulating} kind="int" tau={160} />
         </span>
       </div>
 
       <div style={{ marginTop: 'var(--s3)' }}>
-        <Row label="MAX SUPPLY, 1B MINUS BURNS">
+        <Row label={t('supply.maxSupply')}>
           <Num value={s.maxSupply} kind="int" tau={160} />
         </Row>
-        <Row label="ISSUED TO LEDGER, OF 900M">
+        <Row label={t('supply.issued')}>
           <Num value={s.issued} kind="compact" tau={160} />
         </Row>
-        <Row label="HELD AT THE BANK">
+        <Row label={t('supply.heldAtBank')}>
           <Num value={s.ledgerHeld} kind="compact" tau={160} />
         </Row>
-        <Row label="OUTSIDE THE POOL">
+        <Row label={t('supply.outsidePool')}>
           <Num value={s.outsideStd} kind="compact" tau={160} />
         </Row>
-        <Row label="HARD BACKING PER TOKEN">
+        <Row label={t('supply.backing')}>
           <span className="dim">{fmtPrice(s.backing)}</span>
         </Row>
       </div>
@@ -150,10 +151,10 @@ export function SupplyPanel({ s }: { s: Snapshot }) {
           fill="var(--gold-ghost)"
         />
       </div>
-      <div className="cap">CIRCULATING SUPPLY IS A RECEIPT</div>
+      <div className="cap">{t('supply.receipt')}</div>
 
       <div className="proof">
-        <i /> IDENTITY HOLDS · DRIFT {s.identityDrift.toFixed(7)}
+        <i /> {tv('supply.identityHolds', { v: s.identityDrift.toFixed(7) })}
       </div>
     </Panel>
   );
@@ -162,22 +163,23 @@ export function SupplyPanel({ s }: { s: Snapshot }) {
 /* ---------------------------------------------------------- burn ledger --- */
 
 export function BurnPanel({ s }: { s: Snapshot }) {
+  const { t, tv } = useI18n();
   const [ref, w] = useMeasure<HTMLDivElement>();
   const total = Math.max(1e-9, s.burns);
   const parts: [string, number, string][] = [
-    ['LICENSES', s.burnLicense, 'var(--gold)'],
-    ['BUYBACKS', s.burnBuyback, 'var(--neg)'],
-    ['EXIT FEES', s.burnResolution, 'var(--pos)'],
-    ['REVOCATION', s.burnRevocation, 'var(--dim)'],
+    [t('burn.licenses'), s.burnLicense, 'var(--gold)'],
+    [t('burn.buybacks'), s.burnBuyback, 'var(--neg)'],
+    [t('burn.exitFees'), s.burnResolution, 'var(--pos)'],
+    [t('burn.revocation'), s.burnRevocation, 'var(--dim)'],
   ];
 
   return (
     <Panel
-      title="BURN LEDGER"
-      note="BURNED TOKENS ARE GONE FOREVER"
-      hint="Four ways a token dies: paying for a new branch, a buyback during contraction, half of every exit fee, and half of a dormant banker's balance."
+      title={t('burn.title')}
+      note={t('burn.note')}
+      hint={t('burn.hint')}
     >
-      <Stat label="CUMULATIVE BURNS" sub={`${pct(s.burns / HARD_CAP, 3)} OF THE HARD CAP`} big>
+      <Stat label={t('burn.cumulative')} sub={tv('burn.ofHardCap', { v: pct(s.burns / HARD_CAP, 3) })} big>
         <span className="neg">
           <Num value={s.burns} kind="compact" tau={180} />
         </span>
@@ -207,7 +209,7 @@ export function BurnPanel({ s }: { s: Snapshot }) {
           fill="rgba(184,101,78,0.09)"
         />
       </div>
-      <div className="cap">MAX SUPPLY, STRICTLY NON INCREASING</div>
+      <div className="cap">{t('burn.caption')}</div>
     </Panel>
   );
 }
@@ -215,28 +217,29 @@ export function BurnPanel({ s }: { s: Snapshot }) {
 /* ------------------------------------------------------------- auctions --- */
 
 export function LicenseAuctionPanel({ s }: { s: Snapshot }) {
+  const { t, tv } = useI18n();
   const [ref, w] = useMeasure<HTMLDivElement>();
   const a = s.licenseAuction;
 
   return (
     <Panel
-      title="LICENSE AUCTION"
-      note="PAID IN $STANDARD · 100% BURNED"
-      hint="A hundred licenses a day. The price opens high and falls toward a floor across twenty four hours, so whoever steps in first sets the price. Everything paid is destroyed."
+      title={t('lic.title')}
+      note={t('lic.note')}
+      hint={t('lic.hint')}
     >
       <div className="grid-2" style={{ gap: 'var(--s3)' }}>
         {a.soldOut ? (
-          <Stat label="TODAY'S AUCTION" sub={`CLOSED AT ${int(a.lastSale)}`}>
-            <span className="faint">SOLD OUT</span>
+          <Stat label={t('lic.todaysAuction')} sub={tv('lic.closedAt', { v: int(a.lastSale) })}>
+            <span className="faint">{t('lic.soldOut')}</span>
           </Stat>
         ) : (
-          <Stat label="PRICE NOW" sub={`FLOOR ${int(a.floor)}`}>
+          <Stat label={t('lic.priceNow')} sub={tv('lic.floor', { v: int(a.floor) })}>
             <span className="gold">
               <Num value={a.price} kind="int" tau={120} />
             </span>
           </Stat>
         )}
-        <Stat label="SOLD TODAY" sub={`OPENED AT ${int(a.start)}`}>
+        <Stat label={t('lic.soldToday')} sub={tv('lic.openedAt', { v: int(a.start) })}>
           <Num value={a.soldToday} kind="int" tau={200} />
           <span className="faint"> / {LICENSES_PER_DAY}</span>
         </Stat>
@@ -254,14 +257,15 @@ export function LicenseAuctionPanel({ s }: { s: Snapshot }) {
       </div>
       <div className="cap">
         {a.soldOut
-          ? `REOPENS NEXT EPOCH · OPENS AT 2x LAST, ${int(a.lastSale * 2)}`
-          : 'THE FLOOR SCALES WITH THE RATE, SO EXPANDING COSTS MORE IN EXPANSION AND LESS IN CONTRACTION.'}
+          ? tv('lic.reopens', { v: int(a.lastSale * 2) })
+          : t('lic.caption')}
       </div>
     </Panel>
   );
 }
 
 export function CharterAuctionPanel({ s }: { s: Snapshot }) {
+  const { t, tv } = useI18n();
   const [ref, w] = useMeasure<HTMLDivElement>();
   const a = s.charterAuction;
   const open = a.supply > 0;
@@ -269,27 +273,27 @@ export function CharterAuctionPanel({ s }: { s: Snapshot }) {
 
   return (
     <Panel
-      title="CHARTER AUCTION"
-      note="PAID IN ETH · ROUTES TO THE FEE ENGINE"
-      hint="A charter is a seat at the bank. New ones are sold for ETH on the same falling price curve, and how many are offered each day is a policy decision that starts at zero."
+      title={t('cha.title')}
+      note={t('cha.note')}
+      hint={t('cha.hint')}
     >
       <div className="grid-2" style={{ gap: 'var(--s3)' }}>
         {a.soldOut ? (
-          <Stat label="TODAY'S AUCTION" sub={`CLOSED AT ${dec(a.lastSale, 3)} ETH`}>
-            <span className="faint">SOLD OUT</span>
+          <Stat label={t('lic.todaysAuction')} sub={tv('lic.closedAt', { v: `${dec(a.lastSale, 3)} ETH` })}>
+            <span className="faint">{t('lic.soldOut')}</span>
           </Stat>
         ) : open ? (
-          <Stat label="PRICE NOW" sub={`FLOOR ${dec(a.floor, 2)} ETH`}>
+          <Stat label={t('lic.priceNow')} sub={tv('lic.floor', { v: `${dec(a.floor, 2)} ETH` })}>
             <span className="gold">
               <Num value={a.price} kind="dec3" tau={120} />
             </span>
           </Stat>
         ) : (
-          <Stat label="PRICE NOW" sub="POLICY HAS NOT ENABLED A SALE">
-            <span className="faint">NO SALE</span>
+          <Stat label={t('lic.priceNow')} sub={t('cha.noSaleSub')}>
+            <span className="faint">{t('cha.noSale')}</span>
           </Stat>
         )}
-        <Stat label="SEATS TODAY" sub="POLICY CONTROLLED, STARTS AT ZERO">
+        <Stat label={t('cha.seatsToday')} sub={t('cha.seatsSub')}>
           <Num value={a.soldToday} kind="int" tau={200} />
           <span className="faint"> / {a.supply}</span>
         </Stat>
@@ -307,16 +311,16 @@ export function CharterAuctionPanel({ s }: { s: Snapshot }) {
           />
         ) : (
           <div className="empty-plot">
-            <span className="kicker">NO SEATS OFFERED THIS EPOCH</span>
+            <span className="kicker">{t('cha.noSeats')}</span>
           </div>
         )}
       </div>
       <div className="cap">
         {a.soldOut
-          ? `REOPENS NEXT EPOCH · OPENS AT 3x LAST, ${dec(a.lastSale * 3, 3)} ETH`
+          ? tv('cha.reopens', { v: `${dec(a.lastSale * 3, 3)} ETH` })
           : live
-            ? 'A CHARTER LIVES UNTIL ITS LAST BRANCH IS RETIRED. THERE ARE NO REVOLVING DOORS.'
-            : 'CHARTER SALES ARE POLICY CONTROLLED. SEATS ARE OFFERED DURING SUSTAINED EXPANSION.'}
+            ? t('cha.caption')
+            : t('cha.captionClosed')}
       </div>
     </Panel>
   );
@@ -325,25 +329,26 @@ export function CharterAuctionPanel({ s }: { s: Snapshot }) {
 /* --------------------------------------------------------- exit pressure -- */
 
 export function ExitPanel({ s }: { s: Snapshot }) {
+  const { t, tv } = useI18n();
   const [ref, w] = useMeasure<HTMLDivElement>();
   const hot = s.stress !== 'CALM';
 
   return (
     <Panel
-      title="EXIT PRESSURE AND THE RESOLUTION FEE"
-      note="WHITEPAPER 9.1"
-      hint="The more of the bank tries to leave in a week, the more leaving costs. Half of the fee is burned and half is paid to the bankers who stayed, so a run transfers value to the patient."
+      title={t('exit.title')}
+      note={t('exit.note')}
+      hint={t('exit.hint')}
       alarmed={s.stress === 'RUN'}
     >
       <div className="grid-2" style={{ gap: 'var(--s3)' }}>
-        <Stat label="RESOLUTION FEE" sub="HALF BURNED, HALF TO THE STAYERS" big>
+        <Stat label={t('exit.resolutionFee')} sub={t('exit.feeSub')} big>
           <span className={hot ? 'neg' : 'gold'}>
             <Num value={s.resolutionFee} kind="pct" tau={180} />
           </span>
         </Stat>
         <Stat
-          label="7 DAY EXIT PRESSURE"
-          sub={`SATURATES AT ${pct(RESOLUTION_FEE_SATURATION, 0)}`}
+          label={t('exit.pressure')}
+          sub={tv('exit.saturatesAt', { v: pct(RESOLUTION_FEE_SATURATION, 0) })}
           big
         >
           <span className={hot ? 'neg' : ''}>
@@ -358,7 +363,7 @@ export function ExitPanel({ s }: { s: Snapshot }) {
         <Row
           label={
             <>
-              WITHDRAWN <span className="win">· TRAILING 7D</span>
+              {t('exit.withdrawn')} <span className="win">{t('exit.trailing7d')}</span>
             </>
           }
         >
@@ -367,7 +372,7 @@ export function ExitPanel({ s }: { s: Snapshot }) {
         <Row
           label={
             <>
-              PAID TO STAYERS <span className="win">· CUMULATIVE</span>
+              {t('exit.paidToStayers')} <span className="win">{t('exit.cumulative')}</span>
             </>
           }
         >
@@ -376,9 +381,7 @@ export function ExitPanel({ s }: { s: Snapshot }) {
           </span>
         </Row>
       </div>
-      <div className="cap">
-        WITHDRAWALS ARE NEVER PAUSED OR QUEUED. THE COST OF LEAVING IS THE ONLY CONTROL.
-      </div>
+      <div className="cap">{t('exit.caption')}</div>
     </Panel>
   );
 }
@@ -386,28 +389,29 @@ export function ExitPanel({ s }: { s: Snapshot }) {
 /* ----------------------------------------------------------- fee engine --- */
 
 export function FeeEnginePanel({ s }: { s: Snapshot }) {
+  const { t, tv } = useI18n();
   const [ref, w] = useMeasure<HTMLDivElement>();
   const expansion = s.regime === 'EXPANSION';
 
   return (
     <Panel
-      title="FEE ENGINE, RESERVES, DEFENCE"
-      note="70 / 15 / 15"
-      hint="Every swap pays a fee in ETH. Seventy per cent goes to whichever vault the epoch calls for, fifteen to liquidity that can never be pulled, fifteen to the team."
+      title={t('fee.title')}
+      note={t('fee.note')}
+      hint={t('fee.hint')}
     >
       <div className="grid-2" style={{ gap: 'var(--s3)' }}>
-        <Stat label="HARD RESERVE" sub={`${dec(s.reserveEth, 2)} ETH OF TOKENIZED GOLD`}>
+        <Stat label={t('fee.hardReserve')} sub={tv('fee.goldSub', { v: `${dec(s.reserveEth, 2)} ETH` })}>
           <span className="gold">
             <Num value={s.reserveOz} kind="ozs" tau={200} />
           </span>
         </Stat>
-        <Stat label="PROTOCOL OWNED LIQUIDITY" sub="PAIRED AND ADDED FOREVER">
+        <Stat label={t('fee.pol')} sub={t('fee.polSub')}>
           <Num value={s.polEth} kind="eth" tau={200} />
         </Stat>
       </div>
 
       <div style={{ marginTop: 'var(--s3)' }}>
-        <div className="kicker block-label">ACTIVE VAULT THIS EPOCH</div>
+        <div className="kicker block-label">{t('fee.activeVault')}</div>
         <div className="barline">
           <i style={{ width: expansion ? '100%' : '0%', background: 'var(--pos)' }} />
           <i style={{ width: expansion ? '0%' : '100%', background: 'var(--neg)' }} />
@@ -415,31 +419,31 @@ export function FeeEnginePanel({ s }: { s: Snapshot }) {
         <div className="barkey barkey-stack">
           <span>
             <b style={{ background: expansion ? 'var(--pos)' : 'var(--ghost)' }} />
-            EXPANSION · STACKS GOLD
+            {t('fee.legendExpansion')}
           </span>
           <span>
             <b style={{ background: expansion ? 'var(--ghost)' : 'var(--neg)' }} />
-            CONTRACTION · BUYBACK + BURN
+            {t('fee.legendContraction')}
           </span>
         </div>
       </div>
 
       <div style={{ marginTop: 'var(--s3)' }}>
-        <Row label="EXPANSION VAULT">
+        <Row label={t('fee.expansionVault')}>
           <Num value={s.expansionVault} kind="eth3" tau={160} />
         </Row>
-        <Row label="CONTRACTION VAULT">
+        <Row label={t('fee.contractionVault')}>
           <span className={s.contractionVault > 0 ? 'neg' : ''}>
             <Num value={s.contractionVault} kind="eth3" tau={160} />
           </span>
         </Row>
-        <Row label="BOUGHT BACK AND BURNED">
+        <Row label={t('fee.boughtBurned')}>
           <Num value={s.burnBuyback} kind="compact" tau={160} />
         </Row>
-        <Row label="FEES COLLECTED">
+        <Row label={t('fee.collected')}>
           <Num value={s.feeEthTotal} kind="eth" tau={160} />
         </Row>
-        <Row label="TEAM">
+        <Row label={t('fee.team')}>
           <span className="faint">
             <Num value={s.teamEth} kind="eth" tau={160} />
           </span>
@@ -449,7 +453,7 @@ export function FeeEnginePanel({ s }: { s: Snapshot }) {
       <div ref={ref} style={{ marginTop: 'var(--s3)' }}>
         <Spark data={s.epochs.map((e) => e.reserveOz)} width={w} height={40} stroke="var(--gold)" />
       </div>
-      <div className="cap">HARD RESERVE, CUMULATIVE</div>
+      <div className="cap">{t('fee.caption')}</div>
     </Panel>
   );
 }
@@ -457,28 +461,29 @@ export function FeeEnginePanel({ s }: { s: Snapshot }) {
 /* ------------------------------------------------------------ epoch log --- */
 
 export function EpochLog({ s }: { s: Snapshot }) {
+  const { t, tv } = useI18n();
   const rows = s.epochs.slice(-80).reverse();
 
   return (
     <Panel
-      title="EPOCH LOG"
-      note={`${rows.length} CLOSING SUMMARIES`}
-      hint="One line per closed epoch: what flowed, what policy did about it, what was issued and what was destroyed."
+      title={t('log.title')}
+      note={tv('log.note', { n: rows.length })}
+      hint={t('log.hint')}
     >
       <div className="log-scroll">
         <table className="log">
           <thead>
             <tr>
-              <th>EPOCH</th>
-              <th>REGIME</th>
-              <th>NET FLOW</th>
-              <th>m</th>
-              <th>ISSUED</th>
-              <th>BURNED</th>
-              <th>WITHDRAWN</th>
-              <th>FEE</th>
-              <th>LIC</th>
-              <th>BRANCHES</th>
+              <th>{t('log.epoch')}</th>
+              <th>{t('log.regime')}</th>
+              <th>{t('log.netFlow')}</th>
+              <th>{t('log.m')}</th>
+              <th>{t('log.issued')}</th>
+              <th>{t('log.burned')}</th>
+              <th>{t('log.withdrawn')}</th>
+              <th>{t('log.fee')}</th>
+              <th>{t('log.lic')}</th>
+              <th>{t('log.branches')}</th>
             </tr>
           </thead>
           <tbody>
@@ -489,7 +494,7 @@ export function EpochLog({ s }: { s: Snapshot }) {
                   <td>{pad4(r.epoch)}</td>
                   <td>
                     <span className={r.regime === 'EXPANSION' ? 'tag exp' : 'tag con'}>
-                      {r.regime === 'EXPANSION' ? 'EXP' : 'CON'}
+                      {r.regime === 'EXPANSION' ? t('log.exp') : t('log.con')}
                     </span>
                   </td>
                   <td className={r.netFlow >= 0 ? 'pos' : 'neg'}>{signed(r.netFlow, 2)}</td>
@@ -511,7 +516,7 @@ export function EpochLog({ s }: { s: Snapshot }) {
             {rows.length === 0 ? (
               <tr>
                 <td colSpan={10} className="faint" style={{ textAlign: 'left' }}>
-                  THE FIRST EPOCH HAS NOT CLOSED YET
+                  {t('log.empty')}
                 </td>
               </tr>
             ) : null}
@@ -527,18 +532,19 @@ export function EpochLog({ s }: { s: Snapshot }) {
 const TONE = ['tone-neg', '', 'tone-pos'] as const;
 
 export function EventFeed({ s }: { s: Snapshot }) {
+  const { t, ev } = useI18n();
   return (
     <Panel
-      title="PROTOCOL EVENTS"
-      note="MOST RECENT FIRST"
-      hint="Everything the bank has done, newest first. The same stream runs along the bottom of the page."
+      title={t('feed.title')}
+      note={t('feed.note')}
+      hint={t('feed.hint')}
     >
       <div className="feed">
         {s.events.map((e) => (
           <div className={`feed-row ${TONE[e.tone + 1]}`} key={e.id}>
             <span className="t">{stamp(e.epoch, e.hour)}</span>
-            <span className="k">{e.kind}</span>
-            <span className="m">{e.text}</span>
+            <span className="k">{t(`kind.${e.kind}` as DictKey)}</span>
+            <span className="m">{ev(e)}</span>
           </div>
         ))}
       </div>

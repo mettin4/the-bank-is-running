@@ -1,3 +1,5 @@
+import type { EventArgs, EventKey } from './events';
+
 export type Regime = 'EXPANSION' | 'CONTRACTION';
 
 export type Sentiment = 'ACCUMULATION' | 'EXPANSION' | 'DISTRIBUTION' | 'CAPITULATION';
@@ -15,12 +17,14 @@ export type EventKind =
   | 'RESERVE'
   | 'SYSTEM';
 
-export interface ProtocolEvent {
+export interface ProtocolEvent<K extends EventKey = EventKey> {
   id: number;
   hour: number;
   epoch: number;
   kind: EventKind;
-  text: string;
+  /** What happened, and the numbers it happened with. Wording comes later. */
+  key: K;
+  args: EventArgs[K];
   /** -1 defensive, 0 neutral, 1 expansionary. Drives the one accent color. */
   tone: -1 | 0 | 1;
   /** Big moments. These interrupt the reader with a banner. */

@@ -51,8 +51,12 @@
   --log-row: 35px;
   --log-head: 26px;
 
-  --mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
-  --serif: 'Instrument Serif', 'Times New Roman', Times, serif;
+  /* CJK falls through to a system face after the Latin ones, so Chinese renders
+     cleanly without shipping a multi megabyte webfont. */
+  --cjk: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans CJK SC',
+    'Source Han Sans SC', 'WenQuanYi Micro Hei';
+  --mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, Consolas, var(--cjk), monospace;
+  --serif: 'Instrument Serif', 'Times New Roman', Times, var(--cjk), serif;
 
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
   color-scheme: dark;
