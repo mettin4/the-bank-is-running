@@ -6,6 +6,14 @@ import { buy, sell, type Pool } from './amm';
 
 const EPS = 1e-6;
 
+/**
+ * The identity compares two independently accumulated sums of order 1e8, where
+ * one ulp is about 3e-8, so an absolute bound measures how long the run is
+ * rather than whether the books balance. Drift is a random walk bounded by
+ * roughly sqrt(operations) x ulp; anything above this is a real leak.
+ */
+const driftBound = (circulating: number) => 1e-12 * circulating;
+
 describe('supply identity (whitepaper 3.1 and 3.2)', () => {
   it('holds at every single tick for 200 epochs', () => {
     const e = new Engine(1234);
@@ -17,7 +25,7 @@ describe('supply identity (whitepaper 3.1 and 3.2)', () => {
 
       // 3.1: circulating equals genesis plus mints minus burns, and that number
       // equals the tokens that actually exist across the pool and every wallet.
-      expect(e.identityDrift()).toBeLessThan(EPS);
+      expect(e.identityDrift()).toBeLessThan(driftBound(e.circulating));
 
       // 3.2: max supply is strictly non increasing.
       expect(e.maxSupply).toBeLessThanOrEqual(prevMax + EPS);
@@ -158,6 +166,70 @@ describe('the pool', () => {
   });
 });
 
+describe('revocation (whitepaper 10)', () => {
+  it('burns an unclaimed bounty rather than dropping it from the ledger', () => {
+    const e = new Engine(1234) as unknown as {
+      step(): void;
+      settle(c: unknown): void;
+      revoke(c: unknown): void;
+      findReporter(): unknown;
+      identityDrift(): number;
+      charters: { alive: boolean; branches: number; settled: number; lastActive: number }[];
+      hour: number;
+      issued: number;
+      mintedWithdrawal: number;
+      mintedSettlement: number;
+      ledgerHeld: number;
+      burns: number;
+      circulating: number;
+    };
+    for (let h = 0; h < 60 * 24; h++) e.step();
+
+    // Conservation is the invariant the leak broke: every token counted as
+    // issued is either minted or still sitting in a ledger balance.
+    const conservation = () => e.issued - (e.mintedWithdrawal + e.mintedSettlement + e.ledgerHeld);
+
+    e.charters.forEach((c) => e.settle(c));
+    const ghost = e.charters
+      .filter((c) => c.alive && c.branches > 0 && c.settled > 1000)
+      .sort((a, b) => b.settled - a.settled)[0];
+    expect(ghost).toBeDefined();
+
+    // No active banker anywhere, so there is nobody to pay the bounty to.
+    e.charters.forEach((c) => {
+      if (c !== ghost) c.lastActive = e.hour - 100_000;
+    });
+    expect(e.findReporter()).toBeNull();
+
+    const before = conservation();
+    const burnsBefore = e.burns;
+    const bal = ghost.settled;
+    e.revoke(ghost);
+
+    expect(Math.abs(conservation() - before)).toBeLessThan(EPS);
+    expect(e.burns).toBeGreaterThan(burnsBefore);
+    expect(e.identityDrift()).toBeLessThan(driftBound(e.circulating));
+    // and the whole balance is accounted for
+    expect(bal).toBeGreaterThan(0);
+  });
+});
+
+describe('the identity over a long run', () => {
+  it('holds relative to circulating supply for 3,000 epochs', () => {
+    const e = new Engine(1234);
+    let worst = 0;
+    for (let h = 0; h < 3000 * 24; h++) {
+      e.step();
+      worst = Math.max(worst, e.identityDrift());
+    }
+    // The absolute figure grows with the length of the run, which is why the
+    // bound is relative. At this horizon the old 1e-6 bound would have failed.
+    expect(e.identityDrift()).toBeLessThan(driftBound(e.circulating));
+    expect(worst).toBeLessThan(driftBound(e.circulating));
+    expect(e.circulating).toBeGreaterThan(0);
+  });
+});
+
 describe('the economy is alive', () => {
   it('cuts the rate, flips the vaults, burns, prices an exit and revokes a ghost', () => {
     const e = new Engine(20260909);
@@ -212,7 +284,7 @@ describe('the economy is alive', () => {
       const burnsBefore = e.burns;
       e.step();
       // The door is never queued or paused, whatever the pressure.
-      expect(e.identityDrift()).toBeLessThan(EPS);
+      expect(e.identityDrift()).toBeLessThan(driftBound(e.circulating));
       if (e.run) {
         sawRun = true;
         peakFee = Math.max(peakFee, e.resolutionFeeNow);

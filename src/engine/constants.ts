@@ -1,3 +1,4 @@
+import type { Profile } from './types';
 /**
  * Parameters for The Standard Reserve, whitepaper v0.1.
  *
@@ -61,6 +62,45 @@ export const RESOLUTION_FEE_CEILING = 0.25;
 export const RESOLUTION_FEE_SATURATION = 0.35; // 35% of the bank leaving in 7 days
 
 /**
+ * The two exit pressure levels the terminal reacts at. One home, so the chart's
+ * marks, the red dot and the panel's alarm state cannot drift apart, which they
+ * had: the chart marked RUN at the saturation point while the panel alarmed at
+ * 0.22 and the dot turned red at 0.17.
+ *
+ * Placements, not protocol: the whitepaper names no levels between the floor
+ * and the ceiling, so the exit caption says these are this site's choice.
+ */
+/**
+ * The charter seat schedule. Section 08 gives no rule beyond "starts at zero
+ * and is policy controlled", so this shape is entirely this site's, and it is
+ * listed in ASSUMED PARAMETERS.
+ */
+export const CHARTER_SEATS_HIGH = 8;
+export const CHARTER_SEATS_LOW = 4;
+export const CHARTER_SEATS_M_HIGH = 1.0;
+export const CHARTER_SEATS_M_LOW = 0.75;
+
+/** How far above its hard backing the book prices the token. Model, not protocol. */
+export const BOOK_PREMIUM = 7;
+
+/**
+ * How the synthetic bankers behave, and in what proportion. Nothing about the
+ * traders is in the whitepaper, so this whole table is model. It lives here
+ * rather than in the engine so that the ASSUMED PARAMETERS row counts it
+ * instead of being told a number that can drift out of step with it.
+ */
+export const PROFILE_MIX: { profile: Profile; weight: number }[] = [
+  { profile: 'COMPOUNDER', weight: 0.3 },
+  { profile: 'YIELD_TAKER', weight: 0.3 },
+  { profile: 'FLIPPER', weight: 0.2 },
+  { profile: 'PASSIVE', weight: 0.15 },
+  { profile: 'DRIFTER', weight: 0.05 },
+];
+
+export const STRESS_ELEVATED = 0.1;
+export const STRESS_RUN = 0.22;
+
+/**
  * Lost keys, abandoned wallets and tourists. Everyone else performs the free
  * check-in, so only this slice of the bank can ever go dormant. Onsets are
  * spread across a long window so revocations arrive a few per week, never in a
@@ -104,12 +144,24 @@ export const ASSUMED_PARAMS: AssumedParam[] = [
     id: 'REGIME_BAND',
     vars: { v: `${(REGIME_BAND_FRACTION * 100).toFixed(1)}%` },
   },
+  {
+    id: 'CHARTER_SUPPLY',
+    vars: {
+      hi: CHARTER_SEATS_HIGH,
+      lo: CHARTER_SEATS_LOW,
+      mhi: CHARTER_SEATS_M_HIGH.toFixed(2),
+      mlo: CHARTER_SEATS_M_LOW.toFixed(2),
+    },
+  },
+  { id: 'PROTOCOL_SWAPS', vars: {} },
+  { id: 'MARKET_MODEL', vars: { n: PROFILE_MIX.length, v: BOOK_PREMIUM } },
   { id: 'TRADING_FEE', vars: { v: `${(TRADING_FEE_BPS / 100).toFixed(2)}%` } },
   {
     id: 'RESOLUTION_FEE',
     vars: {
       lo: `${(RESOLUTION_FEE_FLOOR * 100).toFixed(1)}%`,
       hi: `${(RESOLUTION_FEE_CEILING * 100).toFixed(0)}%`,
+      sat: `${(RESOLUTION_FEE_SATURATION * 100).toFixed(0)}%`,
     },
   },
   { id: 'LICENSE_FLOOR', vars: { v: LICENSE_FLOOR_DAYS_OF_YIELD } },

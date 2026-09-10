@@ -28,8 +28,16 @@ import {
   M_LAUNCH,
   RESOLUTION_FEE_CEILING,
   RESOLUTION_WINDOW_DAYS,
+  BOOK_PREMIUM,
+  PROFILE_MIX,
+  CHARTER_SEATS_HIGH,
+  CHARTER_SEATS_LOW,
+  CHARTER_SEATS_M_HIGH,
+  CHARTER_SEATS_M_LOW,
   REGIME_BAND_FRACTION,
   REVOCATION_FEE_RATE,
+  STRESS_ELEVATED,
+  STRESS_RUN,
 } from './constants';
 import { buy, buyNoFee, price as poolPrice, sell, type Pool } from './amm';
 import {
@@ -88,16 +96,10 @@ const ANCHOR_PULL = 1.4;
  * and the floor barely moves. A bull cycle keeps its gains, a long bear does
  * not get a rising floor to stand on.
  */
-const BOOK_PREMIUM = 7;
+
 const BOOK_ALPHA = 1 / 1200;
 
-const PROFILE_MIX: { profile: Profile; weight: number }[] = [
-  { profile: 'COMPOUNDER', weight: 0.3 },
-  { profile: 'YIELD_TAKER', weight: 0.3 },
-  { profile: 'FLIPPER', weight: 0.2 },
-  { profile: 'PASSIVE', weight: 0.15 },
-  { profile: 'DRIFTER', weight: 0.05 },
-];
+
 
 export class Engine {
   private rnd: () => number;
@@ -194,7 +196,7 @@ export class Engine {
   constructor(seed = 20260909) {
     this.rnd = mulberry32(seed);
     this.seedBank();
-    this.licenseStart = licenseFloor(this.m, this.totalBranches) * LICENSE_OPEN_MULTIPLE;
+    this.licenseStart = licenseFloor(this.earningM, this.totalBranches) * LICENSE_OPEN_MULTIPLE;
     this.priceSeries.push(poolPrice(this.pool));
     this.pushEvent('SYSTEM', 'genesisSeeded', {}, 0);
     this.pushEvent('SYSTEM', 'foundingCharters', { n: GENESIS_CHARTERS }, 0);
@@ -447,6 +449,16 @@ export class Engine {
 
   /* ---------------------------------------------------------- issuance ---- */
 
+  /**
+   * The multiplier as far as anything that reads a yield is concerned. Once the
+   * issuance budget is spent the bank pays nothing, so a branch earns nothing
+   * and a license buys nothing: quoting the nominal rate there would price both
+   * against income that no longer exists.
+   */
+  private get earningM(): number {
+    return this.issued >= ISSUANCE_BUDGET ? 0 : this.m;
+  }
+
   private stepIssuance() {
     if (this.issued >= ISSUANCE_BUDGET) return;
     let issue = (BASE_ISSUANCE_PER_DAY * this.m) / HOURS_PER_EPOCH;
@@ -477,7 +489,7 @@ export class Engine {
   /* ---------------------------------------------------------- auctions ---- */
 
   get licenseFloorNow(): number {
-    return licenseFloor(this.m, this.totalBranches);
+    return licenseFloor(this.earningM, this.totalBranches);
   }
 
   get licensePriceNow(): number {
@@ -663,6 +675,14 @@ export class Engine {
       this.settle(reporter);
       this.writeSettled(reporter, reporter.settled + bounty);
       reporter.lastActive = this.hour;
+    } else if (bounty > 0) {
+      // Nobody active to claim it. The bounty was already taken out of the
+      // stayers' half, so leaving it here would remove it from the ledger
+      // without minting or burning it: issued would no longer equal the
+      // balances plus the mints. It burns instead, which is what the protocol
+      // does with value that has no owner. Whitepaper 10 is silent, so the
+      // assumption is listed in ASSUMED PARAMETERS.
+      this.settleBurn(bounty, 'revocation');
     }
 
     if (this.creditAllBranches(stayers)) this.redistributed += stayers;
@@ -724,7 +744,7 @@ export class Engine {
 
   /** The daily yield the branch being bought would actually earn once it opens. */
   private get marginalBranchYield(): number {
-    return dailyYieldPerBranch(this.m, this.totalBranches + 1);
+    return dailyYieldPerBranch(this.earningM, this.totalBranches + 1);
   }
 
   private tryExpand(c: Charter, appetite: number, price: number): boolean {
@@ -741,7 +761,7 @@ export class Engine {
     if (n === 0) return;
     const urge = this.exitUrge;
     const slice = Math.max(1, Math.ceil(n / HOURS_PER_EPOCH)) * (this.run ? 3 : 1);
-    const perBranchDay = dailyYieldPerBranch(this.m, this.totalBranches);
+    const perBranchDay = dailyYieldPerBranch(this.earningM, this.totalBranches);
     const licensePrice = this.licensePriceNow;
     const appetite = this.expansionAppetite;
     const contracting = this.regime === 'CONTRACTION';
@@ -915,7 +935,13 @@ export class Engine {
     );
     this.charterSoldToday = 0;
     const sustained = this.flows.length >= 2 && this.flows.slice(-2).every((f) => f > 0);
-    this.charterSupplyToday = !sustained ? 0 : this.m >= 1.0 ? 8 : this.m >= 0.75 ? 4 : 0;
+    this.charterSupplyToday = !sustained
+      ? 0
+      : this.m >= CHARTER_SEATS_M_HIGH
+        ? CHARTER_SEATS_HIGH
+        : this.m >= CHARTER_SEATS_M_LOW
+          ? CHARTER_SEATS_LOW
+          : 0;
 
     for (const c of this.charters) c.licensesToday = 0;
 
@@ -1051,7 +1077,7 @@ export class Engine {
       charters: this.charters.length - this.chartersBurned,
       chartersBurned: this.chartersBurned,
       branches: this.totalBranches,
-      perBranchDaily: dailyYieldPerBranch(this.m, this.totalBranches),
+      perBranchDaily: dailyYieldPerBranch(this.earningM, this.totalBranches),
 
       exitPressure: pressure,
       resolutionFee: resolutionFee(pressure),
@@ -1086,7 +1112,7 @@ export class Engine {
       sentiment: this.sentiment,
       severity: this.severity,
       run: this.run,
-      stress: pressure >= 0.22 ? 'RUN' : pressure >= 0.1 ? 'ELEVATED' : 'CALM',
+      stress: pressure >= STRESS_RUN ? 'RUN' : pressure >= STRESS_ELEVATED ? 'ELEVATED' : 'CALM',
 
       epochs: this.epochs,
       priceSeries: this.priceSeries,

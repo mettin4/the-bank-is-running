@@ -740,6 +740,16 @@ body {
   display: block;
 }
 
+/* If the books ever stop balancing, the badge says so rather than reassuring. */
+.proof.is-broken {
+  color: var(--neg);
+  border-color: var(--neg-dim);
+}
+
+.proof.is-broken i {
+  background: var(--neg);
+}
+
 /* bars */
 
 .barline {

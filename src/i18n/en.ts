@@ -125,6 +125,7 @@ export const en = {
   'supply.backing': 'HARD BACKING PER TOKEN',
   'supply.receipt': 'CIRCULATING SUPPLY IS A RECEIPT',
   'supply.identityHolds': 'IDENTITY HOLDS · DRIFT {v}',
+  'supply.identityBroken': 'IDENTITY BROKEN · DRIFT {v}',
 
   'burn.title': 'BURN LEDGER',
   'burn.note': 'BURNED TOKENS ARE GONE FOREVER',
@@ -178,15 +179,16 @@ export const en = {
   'exit.resolutionFee': 'RESOLUTION FEE',
   'exit.feeSub': 'HALF BURNED, HALF TO THE STAYERS',
   'exit.pressure': '7 DAY EXIT PRESSURE',
-  'exit.saturatesAt': 'SATURATES AT {v}',
+  'exit.saturatesAt': 'SATURATES AT {v} · ASSUMED',
   'exit.withdrawn': 'WITHDRAWN',
   'exit.trailing7d': '· TRAILING 7D',
   'exit.paidToStayers': 'PAID TO STAYERS',
   'exit.cumulative': '· CUMULATIVE',
-  'exit.caption': 'WITHDRAWALS ARE NEVER PAUSED OR QUEUED. THE COST OF LEAVING IS THE ONLY CONTROL.',
+  'exit.caption':
+    'WITHDRAWALS ARE NEVER PAUSED OR QUEUED. THE COST OF LEAVING IS THE ONLY CONTROL. WHERE THE MARKS SIT ON THE CURVE IS THIS SITE’S CHOICE.',
   'exit.quiet': 'QUIET',
   'exit.elevated': 'ELEVATED',
-  'exit.heavy': 'HEAVY',
+  'exit.saturation': 'SATURATION',
   'exit.run': 'RUN',
   'exit.curveAlt': 'Resolution fee against seven day exit pressure',
 
@@ -211,13 +213,11 @@ export const en = {
   'log.title': 'EPOCH LOG',
   'log.note': '{n} CLOSING SUMMARIES',
   'log.hint':
-    'One line per closed epoch: what flowed, what policy did about it, what was issued and what was destroyed.',
+    'One row per closed epoch: how capital moved, how policy answered, what was issued and what was burned. m CLOSE is the multiplier set at that close, which governs the next epoch, so the ISSUED beside it was streamed at the previous one.',
   'log.epoch': 'EPOCH',
   'log.regime': 'REGIME',
   'log.netFlow': 'NET FLOW',
   'log.m': 'm CLOSE',
-  'log.mHint':
-    'The multiplier set when this epoch closed. It governs the next epoch, so the ISSUED beside it was streamed at the previous close.',
   'log.issued': 'ISSUED',
   'log.burned': 'BURNED',
   'log.withdrawn': 'WITHDRAWN',
@@ -247,7 +247,7 @@ export const en = {
   'kind.SYSTEM': 'SYSTEM',
 
   'mood.ACCUMULATION': 'ACCUMULATION',
-  'mood.EXPANSION': 'EXPANSION',
+  'mood.EXPANSION': 'MARKUP',
   'mood.DISTRIBUTION': 'DISTRIBUTION',
   'mood.CAPITULATION': 'CAPITULATION',
 
@@ -287,8 +287,11 @@ export const en = {
   'av.RATE_CUT': '-{v} / NEGATIVE EPOCH',
   'av.EPOCH_LENGTH': '{v} PROTOCOL HOURS',
   'av.REGIME_BAND': '{v} OF POOL ETH, ROUTING ONLY',
+  'av.CHARTER_SUPPLY': '{hi} SEATS AT m {mhi}, {lo} AT m {mlo}',
+  'av.PROTOCOL_SWAPS': 'NO FEE, OUTSIDE NET FLOW',
+  'av.MARKET_MODEL': '{n} PROFILES, {v}x BOOK PREMIUM',
   'av.TRADING_FEE': '{v} IN ETH',
-  'av.RESOLUTION_FEE': '{lo} FLOOR / {hi} CEILING',
+  'av.RESOLUTION_FEE': '{lo} FLOOR / {hi} CEILING / {sat} SATURATION',
   'av.LICENSE_FLOOR': '{v} DAYS OF ONE BRANCH YIELD',
   'av.CHARTER_FLOOR': '{v} ETH',
   'av.GENESIS_POOL': '{std} / {eth} ETH',
@@ -374,7 +377,7 @@ export type Dict = Record<DictKey, string>;
 export const enEvents: EventDict = {
   genesisSeeded: () => 'GENESIS LIQUIDITY SEEDED · 100,000,000 $STANDARD PAIRED',
   foundingCharters: ({ n }) => `${int(n)} FOUNDING CHARTERS ISSUED · ONE BRANCH EACH`,
-  marketRegime: ({ sentiment }) => `MARKET REGIME · ${sentiment}`,
+  marketRegime: ({ sentiment }) => `MARKET MOOD · ${en[`mood.${sentiment}`]}`,
   runStarting: () => 'EXIT VOLUME ACCELERATING · RESOLUTION FEE REPRICING THE DOOR',
   runSubsided: () => 'RUN SUBSIDED · THE DOOR WAS PRICED, NEVER CLOSED',
   buybackTick: ({ amount }) => `BUYBACK TICK · ${int(amount)} $STANDARD BOUGHT AND BURNED`,
@@ -427,6 +430,18 @@ export const enAssumed = {
     label: 'REGIME HYSTERESIS BAND',
     note: 'Not in the whitepaper. Fee routing ignores a net flow under this share of pool ETH, so a quiet epoch does not flip the vault repeatedly. It touches intra epoch routing only: a closed epoch is recorded by the sign of its own net flow, per section 5.',
   },
+  CHARTER_SUPPLY: {
+    label: 'CHARTER SEATS PER DAY',
+    note: 'Section 08 says the count starts at zero and is policy controlled, and gives no rule. Here seats open only after two consecutive positive epochs, eight a day once the rate is at or above 1.00 and four at or above 0.75. That schedule is this site’s invention.',
+  },
+  PROTOCOL_SWAPS: {
+    label: 'THE BANK’S OWN SWAPS',
+    note: 'The buyback and the liquidity pairing trade against the same pool. Whether the hook counts them is unspecified, and counting them would let a buyback push net flow positive and damp its own trigger, so here they pay no fee and stay outside the signal.',
+  },
+  MARKET_MODEL: {
+    label: 'THE SYNTHETIC MARKET',
+    note: 'Nothing about the traders is in the whitepaper. Bankers are split across five behaviours, compounding, taking yield, flipping, holding and drifting, and the book prices $STANDARD at a premium to its hard backing. Both are this site’s model, not protocol.',
+  },
   TRADING_FEE: {
     label: 'TRADING FEE',
     note: 'Redacted. Charged on both sides of every swap, as section 11 requires.',
@@ -457,7 +472,7 @@ export const enAssumed = {
   },
   REVOCATION_SPLIT: {
     label: 'REVOCATION SPLIT',
-    note: 'Section 10 gives a 70% fee, a 2% bounty and a 30% return, which sums past 100%. The bounty is read as coming out of the stayers half.',
+    note: 'Section 10 gives a 70% fee, a 2% bounty and a 30% return, which sums past 100%. The bounty is read as coming out of the stayers half. If no active banker is found to claim it, the bounty burns; section 10 is silent on that case.',
   },
   HARD_RESERVE: {
     label: 'HARD RESERVE',

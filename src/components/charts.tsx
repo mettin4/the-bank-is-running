@@ -1,4 +1,12 @@
-import { M_CEILING, M_FLOOR, RESOLUTION_FEE_CEILING, RESOLUTION_FEE_FLOOR, RESOLUTION_FEE_SATURATION } from '../engine/constants';
+import {
+  M_CEILING,
+  M_FLOOR,
+  RESOLUTION_FEE_CEILING,
+  RESOLUTION_FEE_FLOOR,
+  RESOLUTION_FEE_SATURATION,
+  STRESS_ELEVATED,
+  STRESS_RUN,
+} from '../engine/constants';
 import { dutchPrice, resolutionFee } from '../engine/policy';
 import type { EpochRecord } from '../engine/types';
 import { useI18n } from '../i18n';
@@ -296,16 +304,18 @@ export function ExitCurve({ pressure, width, height }: ExitProps) {
     pts.push(`${x(p).toFixed(1)},${y(resolutionFee(p)).toFixed(1)}`);
   }
 
+  // The levels come from constants.ts, so the mark and the panel's alarm state
+  // cannot disagree about where a run starts.
   const marks: [string, number][] = [
     [t('exit.quiet'), 0.02],
-    [t('exit.elevated'), 0.1],
-    [t('exit.heavy'), 0.2],
-    [t('exit.run'), RESOLUTION_FEE_SATURATION],
+    [t('exit.elevated'), STRESS_ELEVATED],
+    [t('exit.run'), STRESS_RUN],
+    [t('exit.saturation'), RESOLUTION_FEE_SATURATION],
   ];
 
   const cx = x(pressure);
   const cy = y(resolutionFee(pressure));
-  const hot = pressure >= 0.17;
+  const hot = pressure >= STRESS_RUN;
 
   return (
     <svg className="chart" width={width} height={height} role="img" aria-label={t('exit.curveAlt')}>

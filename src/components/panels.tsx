@@ -80,10 +80,20 @@ export function Hero({ s }: { s: Snapshot }) {
 
 /* -------------------------------------------------------------- supply --- */
 
+/**
+ * Drift below this share of circulating supply is floating point noise from two
+ * independently accumulated sums, not a real imbalance. The badge and the number
+ * beside it answer to the same threshold, so the panel cannot claim the identity
+ * holds while showing a figure that says otherwise.
+ */
+const DRIFT_BOUND = 1e-12;
+
 export function SupplyPanel({ s }: { s: Snapshot }) {
   const { t, tv } = useI18n();
   const [ref, w] = useMeasure<HTMLDivElement>();
   const mints = s.mintedWithdrawal + s.mintedSettlement;
+  const holds = s.identityDrift < DRIFT_BOUND * Math.max(1, s.circulating);
+  const drift = holds ? (0).toFixed(7) : s.identityDrift.toFixed(7);
 
   return (
     <Panel
@@ -153,8 +163,8 @@ export function SupplyPanel({ s }: { s: Snapshot }) {
       </div>
       <div className="cap">{t('supply.receipt')}</div>
 
-      <div className="proof">
-        <i /> {tv('supply.identityHolds', { v: s.identityDrift.toFixed(7) })}
+      <div className={holds ? 'proof' : 'proof is-broken'}>
+        <i /> {tv(holds ? 'supply.identityHolds' : 'supply.identityBroken', { v: drift })}
       </div>
     </Panel>
   );
@@ -484,10 +494,7 @@ export function EpochLog({ s }: { s: Snapshot }) {
               <th>{t('log.epoch')}</th>
               <th>{t('log.regime')}</th>
               <th>{t('log.netFlow')}</th>
-              <th>
-                {t('log.m')}
-                <Hint text={t('log.mHint')} />
-              </th>
+              <th>{t('log.m')}</th>
               <th>{t('log.issued')}</th>
               <th>{t('log.burned')}</th>
               <th>{t('log.withdrawn')}</th>

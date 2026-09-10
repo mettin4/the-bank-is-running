@@ -10,7 +10,7 @@ import type { AssumedDict, Dict } from './en';
  */
 const mood: Record<Sentiment, string> = {
   ACCUMULATION: '吸筹',
-  EXPANSION: '扩张',
+  EXPANSION: '拉升',
   DISTRIBUTION: '派发',
   CAPITULATION: '投降',
 };
@@ -113,6 +113,7 @@ export const zh: Dict = {
   'supply.backing': '每枚硬支撑',
   'supply.receipt': '流通量是一张收据',
   'supply.identityHolds': '恒等式成立 · 偏差 {v}',
+  'supply.identityBroken': '恒等式不成立 · 偏差 {v}',
 
   'burn.title': '销毁账本',
   'burn.note': '销毁的代币永不回归',
@@ -164,15 +165,16 @@ export const zh: Dict = {
   'exit.resolutionFee': '退出费',
   'exit.feeSub': '一半销毁 · 一半付给留守者',
   'exit.pressure': '7 日退出压力',
-  'exit.saturatesAt': '{v} 时饱和',
+  'exit.saturatesAt': '{v} 时饱和 · 假设值',
   'exit.withdrawn': '已提取',
   'exit.trailing7d': '· 近 7 日',
   'exit.paidToStayers': '支付给留守者',
   'exit.cumulative': '· 累计',
-  'exit.caption': '提取从不暂停，也不排队。离场成本是唯一的调控手段。',
+  'exit.caption':
+    '提取从不暂停，也不排队。离场成本是唯一的调控手段。刻度落在曲线上的位置由本站选定。',
   'exit.quiet': '平静',
   'exit.elevated': '升高',
-  'exit.heavy': '沉重',
+  'exit.saturation': '饱和',
   'exit.run': '挤兑',
   'exit.curveAlt': '退出费与 7 日退出压力的关系',
 
@@ -196,13 +198,12 @@ export const zh: Dict = {
 
   'log.title': 'EPOCH 日志',
   'log.note': '{n} 条收盘摘要',
-  'log.hint': '每个已收盘 EPOCH 一行：资金怎么流、政策如何应对、发行多少、销毁多少。',
+  'log.hint':
+    '每个已收盘 EPOCH 一行：资金流向、政策应对、发行多少、销毁多少。收盘 m 是该次收盘定下的乘数，它管的是下一个 EPOCH，因此同一行的发行量是按上一次收盘的乘数流出的。',
   'log.epoch': 'EPOCH',
   'log.regime': '状态',
   'log.netFlow': '净流量',
   'log.m': '收盘 m',
-  'log.mHint':
-    '本 EPOCH 收盘时定下的乘数。它管的是下一个 EPOCH，因此同一行的发行量是按上一次收盘的乘数流出的。',
   'log.issued': '发行',
   'log.burned': '销毁',
   'log.withdrawn': '提取',
@@ -231,7 +232,7 @@ export const zh: Dict = {
   'kind.SYSTEM': '系统',
 
   'mood.ACCUMULATION': '吸筹',
-  'mood.EXPANSION': '扩张',
+  'mood.EXPANSION': '拉升',
   'mood.DISTRIBUTION': '派发',
   'mood.CAPITULATION': '投降',
 
@@ -271,8 +272,11 @@ export const zh: Dict = {
   'av.RATE_CUT': '-{v} / 负向 EPOCH',
   'av.EPOCH_LENGTH': '{v} 协议小时',
   'av.REGIME_BAND': '池子 ETH 的 {v} · 仅影响流向',
+  'av.CHARTER_SUPPLY': 'm 达 {mhi} 时 {hi} 席 · 达 {mlo} 时 {lo} 席',
+  'av.PROTOCOL_SWAPS': '不收手续费 · 不计入净流量',
+  'av.MARKET_MODEL': '{n} 类行为 · 账面溢价 {v} 倍',
   'av.TRADING_FEE': '{v} · 以 ETH 收取',
-  'av.RESOLUTION_FEE': '下限 {lo} / 上限 {hi}',
+  'av.RESOLUTION_FEE': '下限 {lo} / 上限 {hi} / 饱和 {sat}',
   'av.LICENSE_FLOOR': '单个分行 {v} 天收益',
   'av.CHARTER_FLOOR': '{v} ETH',
   'av.GENESIS_POOL': '{std} / {eth} ETH',
@@ -352,7 +356,7 @@ export const zh: Dict = {
 export const zhEvents: EventDict = {
   genesisSeeded: () => '创世流动性注入 · 100,000,000 $STANDARD 已配对',
   foundingCharters: ({ n }) => `${int(n)} 张创始牌照发放 · 各含一个分行`,
-  marketRegime: ({ sentiment }) => `市场阶段 · ${mood[sentiment]}`,
+  marketRegime: ({ sentiment }) => `市场情绪 · ${mood[sentiment]}`,
   runStarting: () => '退出量加速 · 退出费正在重新为离场定价',
   runSubsided: () => '挤兑平息 · 门被定价，从未关闭',
   buybackTick: ({ amount }) => `回购 · ${int(amount)} $STANDARD 已买入并销毁`,
@@ -405,6 +409,18 @@ export const zhAssumed: AssumedDict = {
     label: '状态滞回带',
     note: '白皮书未作规定。净流量低于池子 ETH 的这一比例时，手续费流向不变，以免平静的 EPOCH 反复切换金库。它只影响 EPOCH 内的流向：已收盘的 EPOCH 按其自身净流量的正负记录，依第 5 节。',
   },
+  CHARTER_SUPPLY: {
+    label: '每日牌照席位',
+    note: '第 08 节只说数量从零开始、由政策控制，未给规则。此处仅在连续两个 EPOCH 净流量为正后开放：利率达到 1.00 及以上每天八席，达到 0.75 及以上四席。这套安排是本站的设定。',
+  },
+  PROTOCOL_SWAPS: {
+    label: '银行自身的兑换',
+    note: '回购与流动性配对都在同一个池子里成交。Hook 是否计入它们并无规定，而计入会让回购把净流量推向为正、自行削弱触发条件，因此此处它们不收手续费，也不计入信号。',
+  },
+  MARKET_MODEL: {
+    label: '合成市场',
+    note: '白皮书对交易者没有任何规定。此处银行家分为五类行为：复投、取息、快进快出、持有与随波逐流，账面价格相对硬支撑存在溢价。两者都是本站的模型，不是协议内容。',
+  },
   TRADING_FEE: {
     label: '交易手续费',
     note: '隐去。按第 11 节要求，每笔兑换双向收取。',
@@ -435,7 +451,7 @@ export const zhAssumed: AssumedDict = {
   },
   REVOCATION_SPLIT: {
     label: '吊销分配',
-    note: '第 10 节给出 70% 费用、2% 赏金与 30% 返还，合计超过 100%。此处将赏金理解为从留守者那一半中支出。',
+    note: '第 10 节给出 70% 费用、2% 赏金与 30% 返还，合计超过 100%。此处将赏金理解为从留守者的一半中支出。若找不到活跃的银行家来领取，赏金销毁；第 10 节对此未作规定。',
   },
   HARD_RESERVE: {
     label: '硬储备',

@@ -51,6 +51,21 @@ Chinese ships no webfont. CJK falls through the system stack declared in the
 `--cjk` custom property, and the `unicode-range` on every `@font-face` excludes
 CJK so the latin faces are never asked to render it.
 
+## Never commit a red build
+
+No commit may be created unless, at that moment, all three of these pass:
+
+1. `npm run build` succeeds.
+2. `tsc -b` reports zero errors.
+3. `npm test` passes, every test.
+
+No exceptions, not for a one line fix, not for a commit that only touches
+copy, not for work in progress. Run all three, read the output, and only then
+commit. A commit made without checking is how a red build reached this
+repository once already: the tests and the dictionary check passed, the build
+output was skimmed, and `tsc` had been failing on an unresolved optional import
+the whole time.
+
 ## Evidence
 
 A claim that a change was applied is only settled by the committed content.
