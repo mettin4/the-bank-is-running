@@ -14,10 +14,13 @@ export const en = {
     'THE STANDARD RESERVE, IMPLEMENTED EARLY FROM WHITEPAPER V0.1 · UNOFFICIAL · NOT AFFILIATED',
   'app.langLabel': 'Language',
 
+  // The pair keeps its slash bound to ETH with a non breaking space, so a
+  // narrow header wraps it as "$STANDARD" then "/ ETH" and never leaves the
+  // slash stranded at the end of a line.
   'head.epoch': 'EPOCH',
-  'head.circulating': 'CIRCULATING',
-  'head.burned': 'BURNED',
-  'head.price': 'PRICE',
+  'head.circulating': '$STANDARD CIRCULATING',
+  'head.burned': '$STANDARD BURNED',
+  'head.price': '$STANDARD /\u00A0ETH',
 
   'tab.overview': 'OVERVIEW',
   'tab.supply': 'SUPPLY',
@@ -86,12 +89,12 @@ export const en = {
     'SIXTY EPOCHS. BARS ARE NET ETH FLOW, THE LINE BENEATH IS THE ISSUANCE MULTIPLIER, AND EACH RED TICK IS AN EPOCH THE RATE WAS CUT.',
   'hero.alt': 'Net ETH flow per epoch above, the policy multiplier below',
 
-  'stat.circulating': 'CIRCULATING',
+  'stat.circulating': '$STANDARD CIRCULATING',
   'stat.circulatingHint':
     'Every $STANDARD that exists. Genesis liquidity, plus everything minted when a banker withdrew, minus everything burned.',
   'stat.ofPre': 'OF',
   'stat.ofPost': 'MAX',
-  'stat.burned': 'BURNED',
+  'stat.burned': '$STANDARD BURNED',
   'stat.burnedHint':
     'Tokens destroyed forever by licenses, buybacks, exit fees and revocations. The hard cap falls with every one of them.',
   'stat.retiredFromCap': 'RETIRED FROM THE CAP',
@@ -100,12 +103,12 @@ export const en = {
     'Tokenized gold, bought by the expansion vault with ETH fees. The bank holds it and the vault can never sell.',
   'stat.marketPre': '',
   'stat.marketPost': 'AT MARKET',
-  'stat.price': 'PRICE',
+  'stat.price': '$STANDARD /\u00A0ETH',
   'stat.priceHint':
     'ETH per $STANDARD at the one pool where this economy touches the outside world.',
   'stat.synthetic': 'SYNTHETIC MARKET · NOT A FORECAST',
 
-  'supply.title': 'SUPPLY IDENTITY',
+  'supply.title': '$STANDARD SUPPLY IDENTITY',
   'supply.note': 'WHITEPAPER 3.1',
   'supply.hint':
     'Tokens only come into existence when a banker withdraws. Everything else is a ledger entry, so circulating supply is a receipt of what has actually been taken out of the bank.',
@@ -222,6 +225,7 @@ export const en = {
   'log.exp': 'EXP',
   'log.con': 'CON',
   'log.empty': 'THE FIRST EPOCH HAS NOT CLOSED YET',
+  'log.units': 'NET FLOW IN ETH · ISSUED, BURNED AND WITHDRAWN IN $STANDARD',
 
   'feed.title': 'PROTOCOL EVENTS',
   'feed.note': 'MOST RECENT FIRST',
@@ -353,6 +357,10 @@ export const en = {
   'land.alt4': 'A rate staircase falling off a cliff, tokens entering a burn',
   'land.alt5': 'The quadratic exit fee curve, and value moving from leavers to stayers',
   'land.alt6': "A miniature of the terminal's net flow and multiplier chart",
+
+  // The ticker and the asset symbols, never translated.
+  'unit.std': '$STANDARD',
+  'unit.eth': 'ETH',
 
   'hint.aria': 'What this means',
 } as const;

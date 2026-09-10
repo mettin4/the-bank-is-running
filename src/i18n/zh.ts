@@ -20,9 +20,9 @@ export const zh: Dict = {
   'app.langLabel': '语言',
 
   'head.epoch': 'EPOCH',
-  'head.circulating': '流通量',
-  'head.burned': '已销毁',
-  'head.price': '价格',
+  'head.circulating': '$STANDARD 流通量',
+  'head.burned': '$STANDARD 已销毁',
+  'head.price': '$STANDARD /\u00A0ETH',
 
   'tab.overview': '总览',
   'tab.supply': '供应',
@@ -80,23 +80,23 @@ export const zh: Dict = {
     '六十个 EPOCH。柱为 ETH 净流量,下方折线为发行乘数,每个红色刻度代表该 EPOCH 下调了利率。',
   'hero.alt': '上方为每个 EPOCH 的 ETH 净流量,下方为政策乘数',
 
-  'stat.circulating': '流通量',
+  'stat.circulating': '$STANDARD 流通量',
   'stat.circulatingHint':
     '现存的全部 $STANDARD。创世流动性,加上银行家提取时铸造的部分,减去全部销毁。',
   'stat.ofPre': '上限',
   'stat.ofPost': '',
-  'stat.burned': '已销毁',
+  'stat.burned': '$STANDARD 已销毁',
   'stat.burnedHint': '被扩张许可、回购、退出费与吊销永久销毁的代币。每一次销毁都会拉低硬顶。',
   'stat.retiredFromCap': '已从硬顶注销',
   'stat.hardReserve': '硬储备',
   'stat.hardReserveHint': '扩张金库用 ETH 手续费买入的代币化黄金。由银行持有,金库永不卖出。',
   'stat.marketPre': '按市价',
   'stat.marketPost': '',
-  'stat.price': '价格',
+  'stat.price': '$STANDARD /\u00A0ETH',
   'stat.priceHint': '在这个经济体与外界唯一接触的池子里,每枚 $STANDARD 的 ETH 价格。',
   'stat.synthetic': '合成市场 · 非价格预测',
 
-  'supply.title': '供应恒等式',
+  'supply.title': '$STANDARD 供应恒等式',
   'supply.note': '白皮书 3.1',
   'supply.hint':
     '代币只有在银行家提取时才会诞生。其余全部是账本记录,因此流通量是一张收据,记录已被真正取走的部分。',
@@ -210,6 +210,7 @@ export const zh: Dict = {
   'log.exp': '扩张',
   'log.con': '收缩',
   'log.empty': '第一个 EPOCH 尚未收盘',
+  'log.units': '净流量以 ETH 计 · 发行、销毁与提取以 $STANDARD 计',
 
   'feed.title': '协议事件',
   'feed.note': '最新在前',
@@ -337,6 +338,10 @@ export const zh: Dict = {
   'land.alt4': '利率阶梯坠落,代币进入销毁',
   'land.alt5': '二次型退出费曲线,以及价值从离场者转向留守者',
   'land.alt6': '终端净流量与乘数图表的缩略版',
+
+  // 代币符号与资产符号,不翻译。
+  'unit.std': '$STANDARD',
+  'unit.eth': 'ETH',
 
   'hint.aria': '这是什么意思',
 };

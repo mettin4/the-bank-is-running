@@ -137,7 +137,7 @@ export function SupplyPanel({ s }: { s: Snapshot }) {
         <Row label={t('supply.outsidePool')}>
           <Num value={s.outsideStd} kind="compact" tau={160} />
         </Row>
-        <Row label={t('supply.backing')}>
+        <Row label={t('supply.backing')} unit={t('unit.eth')}>
           <span className="dim">{fmtPrice(s.backing)}</span>
         </Row>
       </div>
@@ -179,7 +179,12 @@ export function BurnPanel({ s }: { s: Snapshot }) {
       note={t('burn.note')}
       hint={t('burn.hint')}
     >
-      <Stat label={t('burn.cumulative')} sub={tv('burn.ofHardCap', { v: pct(s.burns / HARD_CAP, 3) })} big>
+      <Stat
+        label={t('burn.cumulative')}
+        sub={tv('burn.ofHardCap', { v: pct(s.burns / HARD_CAP, 3) })}
+        unit={t('unit.std')}
+        big
+      >
         <span className="neg">
           <Num value={s.burns} kind="compact" tau={180} />
         </span>
@@ -366,6 +371,7 @@ export function ExitPanel({ s }: { s: Snapshot }) {
               {t('exit.withdrawn')} <span className="win">{t('exit.trailing7d')}</span>
             </>
           }
+          unit={t('unit.std')}
         >
           <Num value={s.withdrawn7d} kind="compact" tau={160} />
         </Row>
@@ -375,6 +381,7 @@ export function ExitPanel({ s }: { s: Snapshot }) {
               {t('exit.paidToStayers')} <span className="win">{t('exit.cumulative')}</span>
             </>
           }
+          unit={t('unit.std')}
         >
           <span className="pos">
             <Num value={s.redistributed} kind="compact" tau={160} />
@@ -437,7 +444,7 @@ export function FeeEnginePanel({ s }: { s: Snapshot }) {
             <Num value={s.contractionVault} kind="eth3" tau={160} />
           </span>
         </Row>
-        <Row label={t('fee.boughtBurned')}>
+        <Row label={t('fee.boughtBurned')} unit={t('unit.std')}>
           <Num value={s.burnBuyback} kind="compact" tau={160} />
         </Row>
         <Row label={t('fee.collected')}>
@@ -523,6 +530,7 @@ export function EpochLog({ s }: { s: Snapshot }) {
           </tbody>
         </table>
       </div>
+      <div className="cap">{t('log.units')}</div>
     </Panel>
   );
 }

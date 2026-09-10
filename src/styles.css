@@ -546,6 +546,22 @@ body {
   text-transform: uppercase;
 }
 
+/* The asset a figure is in. Small and dim, after the number, so it sits where
+   the ETH and OZ formatters already put theirs and never enters the column of
+   digits above or below it. */
+.unit {
+  font-size: var(--t1);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--ghost);
+  margin-left: 6px;
+  white-space: nowrap;
+}
+
+.stat .v.big .unit {
+  letter-spacing: 0.1em;
+}
+
 /* identity equation */
 
 .identity {
@@ -1067,6 +1083,17 @@ body {
     overflow: visible;
   }
 
+  /* A narrow column cannot always hold a long label and its figure on one
+     line. Only the pairs that do not fit break, and the figure stays against
+     the right edge when they do. */
+  .row {
+    flex-wrap: wrap;
+  }
+
+  .row .v {
+    margin-left: auto;
+  }
+
   .shell {
     height: auto;
     min-height: 100%;
@@ -1130,6 +1157,14 @@ body {
   .kicker,
   .panel-note {
     white-space: normal;
+  }
+
+  /* Chinese breaks between any two glyphs, which would split a term such as
+     流通量 down the middle. Once these labels are allowed to wrap, they have to
+     wrap at their space instead. */
+  [data-lang='zh'] .kicker,
+  [data-lang='zh'] .panel-note {
+    word-break: keep-all;
   }
 
   .panel-head {
