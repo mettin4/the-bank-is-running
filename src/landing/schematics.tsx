@@ -1,4 +1,5 @@
 import { useI18n } from '../i18n';
+import { GAP_TRACED, towerParts } from '../components/TowerMark';
 
 /**
  * Six schematics in the terminal's chart language: hairline strokes that never
@@ -19,46 +20,38 @@ function Frame({ label, children }: { label: string; children: React.ReactNode }
 
 const hair = { vectorEffect: 'non-scaling-stroke' as const };
 
-/* ------------------------------------------------ 1. the bank is code ---- */
+/* --------------------------------------------------- 1. the authority ---- */
+
+/**
+ * The protocol's own towers, the same geometry as the header mark, blown up
+ * and left as an outline. Scale 7 takes the 24 unit field to 150.5 units tall;
+ * the translate centres it on x = 180 and leaves room under it for a tag.
+ */
+const TOWER_S = 7;
+const TOWER_T = `translate(${180 - 12 * TOWER_S} 9.5) scale(${TOWER_S})`;
+const TOWER = towerParts(GAP_TRACED);
 
 export function SchemaBank() {
   const { t } = useI18n();
-  const cols = [96, 143, 190, 237];
 
   return (
     <Frame label={t('land.alt1')}>
-      {/* pediment */}
-      <path
-        d="M72 66 L166.5 30 L261 66"
-        className="ls-line"
-        stroke="var(--text)"
-        fill="none"
-        {...hair}
-      />
-      <line x1="66" y1="66" x2="267" y2="66" className="ls-line" stroke="var(--text)" {...hair} />
-      <line x1="72" y1="76" x2="261" y2="76" className="ls-grid" {...hair} />
+      <g transform={TOWER_T} className="ls-line" fill="none" stroke="var(--text)">
+        <path d={TOWER.west} {...hair} />
+        <path d={TOWER.east} {...hair} />
+        <rect {...TOWER.bridge} {...hair} />
+      </g>
 
-      {/* the columns are brackets */}
-      {cols.map((x, i) => (
-        <text key={x} x={x} y="128" className="ls-col" textAnchor="middle">
-          {i % 2 === 0 ? '{' : '}'}
-        </text>
-      ))}
-
-      {/* stepped base */}
-      <rect x="72" y="138" width="189" height="9" className="ls-line" fill="none" stroke="var(--text)" {...hair} />
-      <rect x="60" y="147" width="213" height="9" className="ls-line" fill="none" stroke="var(--text)" {...hair} />
-
-      {/* tags */}
-      <line x1="20" y1="96" x2="56" y2="96" className="ls-grid" {...hair} />
-      <text x="20" y="90" className="ls-label">
+      {/* tags, on leader lines that stop clear of the outline */}
+      <line x1="20" y1="76" x2="136" y2="76" className="ls-grid" {...hair} />
+      <text x="20" y="68" className="ls-label">
         {t('land.tag.autonomous')}
       </text>
-      <line x1="277" y1="96" x2="313" y2="96" className="ls-grid" {...hair} />
-      <text x="340" y="90" className="ls-label" textAnchor="end">
+      <line x1="224" y1="120" x2="340" y2="120" className="ls-grid" {...hair} />
+      <text x="340" y="112" className="ls-label" textAnchor="end">
         {t('land.tag.immutable')}
       </text>
-      <text x="166.5" y="180" className="ls-label" textAnchor="middle">
+      <text x="180" y="192" className="ls-label" textAnchor="middle">
         {t('land.tag.lines')}
       </text>
     </Frame>

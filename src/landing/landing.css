@@ -138,8 +138,110 @@
   flex-direction: column;
 }
 
+/* ----------------------------------------------------------------- hero -- */
+
+.lhero {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: var(--s5);
+  min-height: 74vh;
+  padding: var(--s5) 0 var(--s4);
+  border-bottom: 1px solid var(--line);
+}
+
+.lhero-body {
+  align-self: center;
+}
+
+.lhero-title {
+  text-wrap: balance;
+  font-family: var(--serif);
+  font-size: clamp(44px, 8.4vw, 104px);
+  font-weight: 400;
+  line-height: 1.02;
+  letter-spacing: 0.005em;
+  color: var(--text);
+  margin: 0;
+}
+
+.lhero-sub {
+  max-width: 46ch;
+  font-size: var(--t2);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  line-height: 1.8;
+  color: var(--dim);
+  margin: var(--s4) 0 0;
+}
+
+.lhero-meta {
+  font-size: var(--t1);
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin: var(--s2) 0 0;
+}
+
+.lhero-cue {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.lhero-cue-word {
+  font-size: var(--t1);
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ghost);
+}
+
+/* A hairline that draws itself downward once every two seconds, then clears.
+   The track stays put so nothing in the layout moves. */
+.lhero-cue-line {
+  position: relative;
+  width: 1px;
+  height: 56px;
+  background: var(--line);
+}
+
+.lhero-cue-line::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 100%;
+  background: var(--gold);
+  transform-origin: top;
+  animation: lcue 2s var(--ease) infinite;
+}
+
+@keyframes lcue {
+  0% {
+    transform: scaleY(0);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.85;
+  }
+  62% {
+    transform: scaleY(1);
+    opacity: 0.85;
+  }
+  100% {
+    transform: scaleY(1);
+    opacity: 0;
+  }
+}
+
+/* --------------------------------------------------------------- cards --- */
+
 .lcard {
-  padding: var(--s5) 0;
+  padding: 120px 0;
   border-bottom: 1px solid var(--line);
 }
 
@@ -166,12 +268,12 @@
   align-items: center;
 }
 
-.lcard:nth-child(even) .lcard-inner {
+.lcard.is-flip .lcard-inner {
   direction: rtl;
 }
 
-.lcard:nth-child(even) .lcard-copy,
-.lcard:nth-child(even) .lcard-figure {
+.lcard.is-flip .lcard-copy,
+.lcard.is-flip .lcard-figure {
   direction: ltr;
 }
 
@@ -179,13 +281,34 @@
   min-width: 0;
 }
 
+.lcard-kicker {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  margin: 0 0 var(--s3);
+}
+
 .lcard-index {
-  display: block;
   font-size: var(--t1);
   font-weight: 500;
   letter-spacing: 0.2em;
   color: var(--ghost);
-  margin-bottom: var(--s2);
+}
+
+.lcard-title {
+  font-size: var(--t1);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--faint);
+  white-space: nowrap;
+}
+
+.lcard-rule {
+  flex: 1;
+  min-width: var(--s3);
+  height: 1px;
+  background: var(--line);
 }
 
 .lcard-head {
@@ -223,6 +346,31 @@
   justify-content: center;
 }
 
+/* Card 6 shows the terminal's own chart, so it gets the terminal's own frame:
+   hairline border, kicker label, the figure inset from the edge. */
+.lfig-panel {
+  width: 100%;
+  max-width: 500px;
+  margin: 0;
+  padding: var(--s3);
+  border: 1px solid var(--line);
+  background: var(--bg-raised);
+}
+
+.lfig-panel-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s2);
+  margin-bottom: var(--s3);
+  padding-bottom: var(--s2);
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.lfig-panel .lschem {
+  max-width: none;
+}
+
 /* ---------------------------------------------------------- schematics --- */
 
 .lschem {
@@ -252,18 +400,21 @@
   fill: var(--ghost);
 }
 
-.ls-col {
-  font-family: var(--mono);
-  font-size: 46px;
-  font-weight: 300;
-  fill: var(--dim);
-}
-
 [data-lang='zh'] .ls-label,
 [data-lang='zh'] .lcard-sub,
+[data-lang='zh'] .lcard-title,
+[data-lang='zh'] .lhero-sub,
+[data-lang='zh'] .lhero-meta,
+[data-lang='zh'] .lhero-cue-word,
 [data-lang='zh'] .lhead-name,
 [data-lang='zh'] .lhead-tag {
   letter-spacing: 0.04em;
+}
+
+/* A full-width CJK glyph is nearly twice a mono ch, so the same measure in ch
+   breaks the subline a line early. */
+[data-lang='zh'] .lhero-sub {
+  max-width: 64ch;
 }
 
 /* The display serif carries no CJK, so Chinese headlines are set in the text
@@ -320,12 +471,35 @@
     padding: 0 var(--s2);
   }
 
+  .lhero {
+    min-height: 68vh;
+    gap: var(--s4);
+    padding: var(--s4) 0 var(--s3);
+  }
+
+  .lhero-sub {
+    font-size: var(--t1);
+    margin-top: var(--s3);
+  }
+
+  .lhero-cue-line {
+    height: 40px;
+  }
+
   .lcard {
-    padding: var(--s4) 0;
+    padding: 64px 0;
+  }
+
+  .lfig-panel {
+    padding: var(--s2);
+  }
+
+  .lfig-panel-head {
+    margin-bottom: var(--s2);
   }
 
   .lcard-inner,
-  .lcard:nth-child(even) .lcard-inner {
+  .lcard.is-flip .lcard-inner {
     grid-template-columns: minmax(0, 1fr);
     gap: var(--s3);
     direction: ltr;
@@ -355,11 +529,26 @@
     transform: none;
     transition: none;
   }
+
+  /* The cue still reads as a mark under the word, it just stops moving. */
+  .lhero-cue-line::after {
+    animation: none;
+    transform: scaleY(1);
+    opacity: 0.5;
+  }
 }
 
 @media print {
   [data-reveal='on'] .lcard {
     opacity: 1;
     transform: none;
+  }
+
+  .lhero {
+    min-height: 0;
+  }
+
+  .lhero-cue {
+    display: none;
   }
 }

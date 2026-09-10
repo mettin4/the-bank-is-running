@@ -17,7 +17,7 @@ export function Footer({ withMark = false }: { withMark?: boolean }) {
         rel="noreferrer noopener"
         className={withMark ? 'foot-link-mark' : undefined}
       >
-        {withMark ? <TowerMark size={14} /> : null}
+        {withMark ? <TowerMark size={16} /> : null}
         {t('foot.whitepaper')}
       </a>
       <span className="foot-sep">·</span>
