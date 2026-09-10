@@ -1,5 +1,4 @@
 import type { EventDict } from '../engine/events';
-import type { Sentiment } from '../engine/types';
 import { dec, int, pad4, pct, signedEth } from '../engine/format';
 import type { AssumedDict, Dict } from './en';
 
@@ -8,13 +7,6 @@ import type { AssumedDict, Dict } from './en';
  * word for word. Terms the Chinese crypto market uses in English stay in
  * English: $STANDARD, ETH, OZ, EPOCH, LP.
  */
-const mood: Record<Sentiment, string> = {
-  ACCUMULATION: '吸筹',
-  EXPANSION: '拉升',
-  DISTRIBUTION: '派发',
-  CAPITULATION: '投降',
-};
-
 export const zh: Dict = {
   'app.subtitle': 'THE STANDARD RESERVE · 依据白皮书 V0.1 提前实现 · 非官方 · 与官方无关联',
   'app.langLabel': '语言',
@@ -356,7 +348,7 @@ export const zh: Dict = {
 export const zhEvents: EventDict = {
   genesisSeeded: () => '创世流动性注入 · 100,000,000 $STANDARD 已配对',
   foundingCharters: ({ n }) => `${int(n)} 张创始牌照发放 · 各含一个分行`,
-  marketRegime: ({ sentiment }) => `市场情绪 · ${mood[sentiment]}`,
+  marketRegime: ({ sentiment }) => `市场情绪 · ${zh[`mood.${sentiment}`]}`,
   runStarting: () => '退出量加速 · 退出费正在重新为离场定价',
   runSubsided: () => '挤兑平息 · 门被定价，从未关闭',
   buybackTick: ({ amount }) => `回购 · ${int(amount)} $STANDARD 已买入并销毁`,
