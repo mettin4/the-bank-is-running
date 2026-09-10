@@ -83,6 +83,9 @@ h1{font-family:'Instrument Serif',serif;font-weight:400;font-size:150px;line-hei
 </div></body></html>`;
 }
 
+// playwright is an optional dev tool, not a dependency of this project, so the
+// type checker will not find it on a normal install. See the header.
+// @ts-ignore
 const { chromium } = await import('playwright').catch(() => {
   throw new Error('playwright is not installed; see the header of this file');
 });
