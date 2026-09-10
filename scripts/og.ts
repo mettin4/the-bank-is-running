@@ -90,7 +90,14 @@ const { chromium } = await import('playwright').catch(() => {
   throw new Error('playwright is not installed; see the header of this file');
 });
 
-const browser = await chromium.launch();
+// LCD subpixel antialiasing paints coloured fringes onto text. Measured on the
+// previous build of this card, 29.0% of the antialiased edge pixels in the
+// headline and the mark deviated from a neutral blend of ink and ground by more
+// than 6 levels, some by as much as 128: one pixel of "THE STANDARD RESERVE"
+// came out rgb(26,153,192), a cyan. This card is rendered once and served to
+// every viewer whatever their subpixel layout, so it has to be greyscale
+// antialiased. With this flag the same measurement caps at 5.8 levels.
+const browser = await chromium.launch({ args: ['--disable-lcd-text'] });
 const page = await browser.newPage({ viewport: { width: WIDTH, height: HEIGHT }, deviceScaleFactor: 1 });
 await page.setContent(html(), { waitUntil: 'load' });
 // Force every declared face to load rather than waiting for a glyph to need
