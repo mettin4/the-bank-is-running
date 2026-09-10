@@ -12,7 +12,8 @@
     "dormancy": "tsx scripts/dormancy.ts",
     "licenses": "tsx scripts/licenses.ts",
     "prices": "tsx scripts/price-paths.ts",
-    "i18n:review": "tsx scripts/i18n-review.ts"
+    "i18n:review": "tsx scripts/i18n-review.ts",
+    "og": "tsx scripts/og.ts"
   },
   "dependencies": {
     "react": "^18.3.1",
