@@ -437,6 +437,9 @@
 [data-lang='zh'] .lcard-title,
 [data-lang='zh'] .lhero-sub,
 [data-lang='zh'] .lhero-meta,
+[data-lang='zh'] .lbtn,
+[data-lang='zh'] .lbtn-sm,
+[data-lang='zh'] .llink,
 [data-lang='zh'] .lhead-name,
 [data-lang='zh'] .lhead-tag {
   letter-spacing: 0.04em;

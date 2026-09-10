@@ -720,6 +720,12 @@
 /* Chinese is denser than Latin. The wide tracking that suits small caps English
    makes CJK look sparse and pushes labels past their columns, so it is pulled
    back wherever the type is set in caps. */
+[data-lang='zh'] .head-sub,
+[data-lang='zh'] .cold-line,
+[data-lang='zh'] .c-strip,
+[data-lang='zh'] .c-label,
+[data-lang='zh'] .legend-item,
+[data-lang='zh'] .proof,
 [data-lang='zh'] .kicker,
 [data-lang='zh'] .kicker-b,
 [data-lang='zh'] .panel-title,

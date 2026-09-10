@@ -12,6 +12,7 @@ import { Narrator } from './components/Narrator';
 import { Rail } from './components/Rail';
 import { StatRow } from './components/StatRow';
 import { Tabs, type Tab } from './components/Tabs';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { Footer } from './components/Footer';
 import { Ticker } from './components/Ticker';
 import {
@@ -62,6 +63,7 @@ export default function Terminal() {
 
           <main className="main" ref={mainRef}>
             <Tabs value={tab} onChange={setTab} />
+            <ErrorBoundary scope={`panels:${tab}`} key={tab}>
             <Narrator s={s} where="top" />
 
             {tab === 'OVERVIEW' ? (
@@ -118,6 +120,8 @@ export default function Terminal() {
                 </details>
               </>
             ) : null}
+
+            </ErrorBoundary>
 
             <Footer />
           </main>

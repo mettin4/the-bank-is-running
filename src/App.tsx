@@ -1,5 +1,7 @@
 import { lazy, Suspense } from 'react';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { Landing } from './landing/Landing';
+import { lazyChunk } from './lazyChunk';
 import { isAppRoute, usePath } from './router';
 
 /**
@@ -7,7 +9,7 @@ import { isAppRoute, usePath } from './router';
  * evaluated, so keeping it in its own chunk is what makes the landing open with
  * nothing running behind it.
  */
-const Terminal = lazy(() => import('./Terminal'));
+const Terminal = lazy(lazyChunk(() => import('./Terminal')));
 
 export default function App() {
   const path = usePath();
@@ -15,8 +17,10 @@ export default function App() {
   if (!isAppRoute(path)) return <Landing />;
 
   return (
-    <Suspense fallback={<div className="boot" aria-hidden="true" />}>
-      <Terminal />
-    </Suspense>
+    <ErrorBoundary scope="terminal">
+      <Suspense fallback={<div className="boot" role="status" aria-label="Loading the terminal" />}>
+        <Terminal />
+      </Suspense>
+    </ErrorBoundary>
   );
 }
