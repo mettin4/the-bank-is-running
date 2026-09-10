@@ -150,7 +150,9 @@
      cannot push the cue below the fold. */
   height: 85svh;
   max-height: 85svh;
-  padding: var(--s4) 0;
+  /* Extra room at the foot keeps the cue clear of the divider. The hero height
+     is fixed, so this takes space from the copy block, not from the section. */
+  padding: var(--s4) 0 var(--s5);
   border-bottom: 1px solid var(--line);
   /* Its own stacking context, below the sticky header's, so the cue can never
      ride over the header on the way past it. */
@@ -193,19 +195,26 @@
   margin: var(--s2) 0 0;
 }
 
+/* The label and the line are one block, held against the hero's bottom edge
+   with clear air beneath it, so the pair reads as the hero's own invitation to
+   scroll and never as the heading of the section below the divider. */
 .lhero-cue {
-  display: flex;
+  display: inline-flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 12px;
+  gap: 10px;
+  justify-self: start;
 }
 
 .lhero-cue-word {
-  font-size: var(--t1);
+  font-family: var(--mono);
+  /* One step up the scale from an ordinary kicker: this one is an instruction,
+     not a caption. */
+  font-size: var(--t2);
   font-weight: 500;
-  letter-spacing: 0.28em;
+  letter-spacing: 0.34em;
   text-transform: uppercase;
-  color: var(--ghost);
+  color: var(--gold);
 }
 
 /* A hairline that draws itself downward once every two seconds, then clears.
@@ -213,8 +222,10 @@
 .lhero-cue-line {
   position: relative;
   width: 1px;
-  height: 56px;
-  background: var(--line);
+  height: 64px;
+  /* A faint gold rail, so the full strength gold that travels down it is the
+     thing the eye catches. */
+  background: var(--gold-ghost);
 }
 
 .lhero-cue-line::after {
@@ -234,12 +245,12 @@
     transform: scaleY(0);
     opacity: 0;
   }
-  12% {
-    opacity: 0.85;
+  10% {
+    opacity: 1;
   }
-  62% {
+  65% {
     transform: scaleY(1);
-    opacity: 0.85;
+    opacity: 1;
   }
   100% {
     transform: scaleY(1);
@@ -426,10 +437,15 @@
 [data-lang='zh'] .lcard-title,
 [data-lang='zh'] .lhero-sub,
 [data-lang='zh'] .lhero-meta,
-[data-lang='zh'] .lhero-cue-word,
 [data-lang='zh'] .lhead-name,
 [data-lang='zh'] .lhead-tag {
   letter-spacing: 0.04em;
+}
+
+/* The cue has to stay emphatic in Chinese too, just short of the sparseness
+   that wide Latin tracking causes in CJK. */
+[data-lang='zh'] .lhero-cue-word {
+  letter-spacing: 0.18em;
 }
 
 /* A full-width CJK glyph is nearly twice a mono ch, so the same measure in ch
@@ -498,7 +514,7 @@
     height: 80svh;
     max-height: 80svh;
     gap: var(--s3);
-    padding: var(--s3) 0;
+    padding: var(--s3) 0 var(--s4);
   }
 
   .lhero-sub {
