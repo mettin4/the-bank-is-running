@@ -5,6 +5,10 @@ node_modules/
 dist/
 *.tsbuildinfo
 
+# generated assets that are not part of the site: tweet cards and the like.
+# public/og.png is committed on purpose, it is served.
+out/
+
 # deployment
 .vercel/
 

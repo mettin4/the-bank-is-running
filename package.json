@@ -13,7 +13,8 @@
     "licenses": "tsx scripts/licenses.ts",
     "prices": "tsx scripts/price-paths.ts",
     "i18n:review": "tsx scripts/i18n-review.ts",
-    "og": "tsx scripts/og.ts"
+    "og": "tsx scripts/og.ts",
+    "tweet:cards": "tsx scripts/tweet-cards.ts"
   },
   "dependencies": {
     "react": "^18.3.1",
