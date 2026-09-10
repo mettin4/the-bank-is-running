@@ -143,10 +143,19 @@
 .lhero {
   display: grid;
   grid-template-rows: 1fr auto;
-  gap: var(--s5);
-  min-height: 74vh;
-  padding: var(--s5) 0 var(--s4);
+  gap: var(--s4);
+  height: 85vh;
+  max-height: 85vh;
+  /* Small viewport units where they exist, so a phone's collapsing browser bar
+     cannot push the cue below the fold. */
+  height: 85svh;
+  max-height: 85svh;
+  padding: var(--s4) 0;
   border-bottom: 1px solid var(--line);
+  /* Its own stacking context, below the sticky header's, so the cue can never
+     ride over the header on the way past it. */
+  position: relative;
+  z-index: 0;
 }
 
 .lhero-body {
@@ -241,7 +250,7 @@
 /* --------------------------------------------------------------- cards --- */
 
 .lcard {
-  padding: 120px 0;
+  padding: 96px 0;
   border-bottom: 1px solid var(--line);
 }
 
@@ -261,11 +270,14 @@
   transform: none;
 }
 
+/* A hard ceiling on the content box, so no card can open a dead zone however
+   tall its figure wants to be. Both columns centre against each other. */
 .lcard-inner {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: var(--s5);
   align-items: center;
+  max-height: 640px;
 }
 
 .lcard.is-flip .lcard-inner {
@@ -330,6 +342,15 @@
   line-height: 1.9;
   color: var(--faint);
   margin: 0;
+}
+
+.lcard-body {
+  max-width: 52ch;
+  font-size: var(--t3);
+  line-height: 1.75;
+  letter-spacing: 0.005em;
+  color: var(--dim);
+  margin: var(--s3) 0 0;
 }
 
 .lcard-actions {
@@ -472,9 +493,12 @@
   }
 
   .lhero {
-    min-height: 68vh;
-    gap: var(--s4);
-    padding: var(--s4) 0 var(--s3);
+    height: 80vh;
+    max-height: 80vh;
+    height: 80svh;
+    max-height: 80svh;
+    gap: var(--s3);
+    padding: var(--s3) 0;
   }
 
   .lhero-sub {
@@ -487,7 +511,16 @@
   }
 
   .lcard {
-    padding: 64px 0;
+    padding: 56px 0;
+  }
+
+  .lcard-inner {
+    max-height: none;
+  }
+
+  .lcard-body {
+    font-size: var(--t2);
+    margin-top: var(--s2);
   }
 
   .lfig-panel {

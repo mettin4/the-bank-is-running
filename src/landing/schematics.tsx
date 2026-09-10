@@ -51,9 +51,6 @@ export function SchemaBank() {
       <text x="340" y="112" className="ls-label" textAnchor="end">
         {t('land.tag.immutable')}
       </text>
-      <text x="180" y="192" className="ls-label" textAnchor="middle">
-        {t('land.tag.lines')}
-      </text>
     </Frame>
   );
 }

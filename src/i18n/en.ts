@@ -303,21 +303,35 @@ export const en = {
   'land.k4': 'CONTRACTION',
   'land.k5': 'THE INVERTED RUN',
   'land.k6': 'THIS SITE',
-  'land.h1': 'A central bank with no one in charge.',
-  'land.s1': 'NO BOARD · NO COMMITTEE · 4,000 LINES OF CODE',
-  'land.h2': 'It reads one number: net ETH flow.',
-  'land.s2': 'NET FLOW THROUGH ONE POOL · NOTHING ELSE',
-  'land.h3': 'Money in: the rate climbs, fees buy gold.',
-  'land.s3': 'RATE RISES STEP BY STEP · FEES BUY TOKENIZED GOLD',
+  // The protocol's own headline, quoted, because the subline credits it to
+  // them. Verified against the whitepaper capture, which never calls the bank
+  // "the people's central bank".
+  'land.h1': 'The sovereign onchain central bank.',
+  'land.s1': 'THEIR WORDS, NOT OURS · FULLY AUTONOMOUS',
+  'land.b1':
+    'STANDARD is a monetary system run entirely by code. No board sets policy and no one can step in to change it. The rules were written once, and the bank follows them.',
+  'land.h2': 'One input: net ETH flow.',
+  'land.s2': 'MEASURED AT ONE POOL · NOTHING ELSE COUNTS',
+  'land.b2':
+    'All trading happens in a single ETH/STANDARD pool. Each epoch the bank measures one number there: ETH that came in minus ETH that left. Every decision below follows from that number.',
+  'land.h3': 'Money in: rate climbs, fees buy gold.',
+  'land.s3': 'RAISES ARE EARNED STEP BY STEP',
+  'land.b3':
+    'When net flow is positive, the bank slowly raises how much STANDARD it issues to bankers, and routes trading fees into hard reserves: tokenized gold. Good times build the balance sheet.',
   'land.h4': 'Money out: instant cut, fees burn supply.',
-  'land.s4': 'CUTS ARE INSTANT · FEES BUY BACK AND BURN',
+  'land.s4': 'CUTS LAND THE SAME EPOCH',
+  'land.b4':
+    'When net flow turns negative, issuance is cut immediately and fees flip to buying STANDARD back and burning it. The bank reacts to bad news first and asks questions never.',
   'land.h5': 'A bank run pays the ones who stay.',
-  'land.s5': 'EXIT FEE RISES WITH THE RUN · HALF BURNED · HALF TO WHO STAYED',
-  'land.h6': "The bank hasn't launched yet. This site is the whitepaper, running.",
-  'land.s6': '1,000 BANKS · SYNTHETIC MARKET · EVERY ASSUMPTION LABELED',
+  'land.s5': 'EXIT FEE RISES WITH THE RUN · HALF BURNED · HALF TO STAYERS',
+  'land.b5':
+    'Withdrawals are never paused. Instead, the cost of leaving rises with how many are leaving. Half of every exit fee is burned; the other half is paid to bankers who stayed. Panic funds patience.',
+  'land.h6': "STANDARD hasn't launched. Here, its rules already run.",
+  'land.s6': 'UNOFFICIAL · SYNTHETIC MARKET · EVERY ASSUMPTION LABELED',
+  'land.b6':
+    "This site implements the whitepaper's rules and runs them against a synthetic market: 1,000 simulated banks and bot traders. Launch parameters aren't public, so assumed values are labeled in the app. Watch how the bank will behave, before it exists.",
   'land.tag.autonomous': 'AUTONOMOUS',
   'land.tag.immutable': 'IMMUTABLE',
-  'land.tag.lines': '4,000 LINES',
   'land.tag.pool': 'ONE POOL',
   'land.tag.in': 'IN',
   'land.tag.out': 'OUT',
@@ -332,7 +346,7 @@ export const en = {
   'land.tag.half': '50 / 50',
   'land.tag.netflow': 'NET ETH FLOW',
   'land.tag.multiplier': 'MULTIPLIER m',
-  'land.figLabel6': 'FROM THE TERMINAL',
+  'land.figLabel6': 'LIVE IN THE APP',
   'land.alt1': "The protocol's twin towers, drawn in hairline strokes",
   'land.alt2': 'One pool, ETH in and ETH out, and a single needle for the net',
   'land.alt3': 'A rising rate staircase beside a vault filling with gold',

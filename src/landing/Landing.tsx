@@ -48,6 +48,7 @@ function Card({
   title,
   headline,
   sub,
+  body,
   schematic,
   figureLabel,
   children,
@@ -56,6 +57,7 @@ function Card({
   title: DictKey;
   headline: DictKey;
   sub: DictKey;
+  body: DictKey;
   schematic: ReactNode;
   /** When given, the figure is framed like a terminal panel under this label. */
   figureLabel?: DictKey;
@@ -79,6 +81,7 @@ function Card({
           </p>
           <h2 className="lcard-head">{t(headline)}</h2>
           <p className="lcard-sub">{t(sub)}</p>
+          <p className="lcard-body">{t(body)}</p>
           {children}
         </div>
         <div className="lcard-figure">
@@ -150,16 +153,17 @@ export function Landing() {
       <main className="lmain">
         <Hero />
 
-        <Card index={1} title="land.k1" headline="land.h1" sub="land.s1" schematic={<SchemaBank />} />
-        <Card index={2} title="land.k2" headline="land.h2" sub="land.s2" schematic={<SchemaFlow />} />
-        <Card index={3} title="land.k3" headline="land.h3" sub="land.s3" schematic={<SchemaLoosen />} />
-        <Card index={4} title="land.k4" headline="land.h4" sub="land.s4" schematic={<SchemaCut />} />
-        <Card index={5} title="land.k5" headline="land.h5" sub="land.s5" schematic={<SchemaRun />} />
+        <Card index={1} title="land.k1" headline="land.h1" sub="land.s1" body="land.b1" schematic={<SchemaBank />} />
+        <Card index={2} title="land.k2" headline="land.h2" sub="land.s2" body="land.b2" schematic={<SchemaFlow />} />
+        <Card index={3} title="land.k3" headline="land.h3" sub="land.s3" body="land.b3" schematic={<SchemaLoosen />} />
+        <Card index={4} title="land.k4" headline="land.h4" sub="land.s4" body="land.b4" schematic={<SchemaCut />} />
+        <Card index={5} title="land.k5" headline="land.h5" sub="land.s5" body="land.b5" schematic={<SchemaRun />} />
         <Card
           index={6}
           title="land.k6"
           headline="land.h6"
           sub="land.s6"
+          body="land.b6"
           schematic={<SchemaTerminal />}
           figureLabel="land.figLabel6"
         >

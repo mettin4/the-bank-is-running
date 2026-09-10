@@ -12,18 +12,12 @@
  */
 
 /**
- * The outer silhouette, in a 24 x 24 field: the crown falls away over the top
+ * The traced silhouette, in a 24 x 24 field: the crown falls away over the top
  * eighth, the base steps out at 68% and 82% of the height, and the figure is a
- * little under half as wide as it is tall.
- *
- * Only the gap between the shafts is a variable. Traced, it is 0.6 units, which
- * at 20px lands on half a device pixel and greys the whole mark into a single
- * column. So the small instances open it to a full pixel, the ordinary optical
- * correction for a mark set this size, and the figure drawn large keeps the
- * traced width.
+ * little under half as wide as it is tall. This is the geometry to draw large.
+ * Small sizes use the variant below instead.
  */
 export const GAP_TRACED = 0.6;
-export const GAP_OPTICAL = 1.2;
 
 const west = (gap: number) => {
   const inner = 12 - gap / 2;
@@ -44,37 +38,35 @@ export function towerParts(gap: number) {
   };
 }
 
-export function TowerMark({
-  size = 20,
-  className,
-  gap = GAP_OPTICAL,
-}: {
-  size?: number;
-  className?: string;
-  gap?: number;
-}) {
-  const p = towerParts(gap);
-  // The gap is centred on x = 12, which at any size lands on a device pixel
-  // boundary and so splits its one pixel of darkness across two, greying the
-  // seam away. Half a device pixel of offset drops it inside a single column.
-  const snap = 12 / size;
+/**
+ * The small-size variant, drawn on a 20 unit grid so that at 20px every edge
+ * lands on a whole device pixel and nothing is left to antialiasing.
+ *
+ * The traced mark is too fine to survive here: its shafts and the gap between
+ * them all fall under a pixel and grey together into one obelisk. So this
+ * variant thickens each shaft to two units and opens the gap to two, keeping
+ * the crowns, the two steps into each base and the bridge. It reads as two
+ * towers at 20px, which the traced geometry does not.
+ */
+const SMALL_WEST = 'M9 1 L7 4 L7 13 L6 13 L6 16 L5 16 L5 19 L9 19 Z';
+const SMALL_EAST = 'M11 1 L13 4 L13 13 L14 13 L14 16 L15 16 L15 19 L11 19 Z';
+const SMALL_BRIDGE = { x: 9, y: 8, width: 2, height: 1 };
 
+export function TowerMark({ size = 20, className }: { size?: number; className?: string }) {
   return (
     <svg
       className={className ? `towermark ${className}` : 'towermark'}
       width={size}
       height={size}
-      viewBox="0 0 24 24"
+      viewBox="0 0 20 20"
       fill="currentColor"
       role="img"
       aria-label="The Standard Reserve"
       focusable="false"
     >
-      <g transform={`translate(${snap.toFixed(3)} 0)`}>
-        <path d={p.west} />
-        <path d={p.east} />
-        <rect {...p.bridge} />
-      </g>
+      <path d={SMALL_WEST} />
+      <path d={SMALL_EAST} />
+      <rect {...SMALL_BRIDGE} />
     </svg>
   );
 }
