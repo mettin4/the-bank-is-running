@@ -455,6 +455,9 @@
 
   .tab {
     margin-right: var(--s2);
+    min-height: 44px;
+    padding-left: var(--s1);
+    padding-right: var(--s1);
   }
 
   .panel,
@@ -487,10 +490,26 @@
     padding: var(--s3);
   }
 
+  /* A 240px box right anchored to a 14px button hangs 226px off the left edge
+     of a phone. Span the block it belongs to instead. */
+  .hint-wrap {
+    position: static;
+  }
+
+  .panel,
+  .rail-block,
+  .hero,
+  .statrow-cell,
+  .narrator-top,
+  .stat {
+    position: relative;
+  }
+
   .hint-pop {
-    left: auto;
-    right: 0;
-    width: 240px;
+    left: var(--s2);
+    right: var(--s2);
+    width: auto;
+    top: auto;
   }
 
   .flash {
@@ -621,6 +640,9 @@
     width: 100%;
     justify-content: space-between;
     gap: var(--s2);
+    /* Below about 414px the four cells cannot share a row without pushing the
+       whole shell wider than the viewport. Let them wrap. */
+    flex-wrap: wrap;
   }
 
   .headstrip-cell {
@@ -628,14 +650,14 @@
   }
 
   .rail .hint-wrap {
-    position: relative;
+    position: static;
   }
 
   .rail .hint-pop {
-    left: auto;
-    right: 0;
-    width: 240px;
-    top: calc(100% + 8px);
+    left: var(--s2);
+    right: var(--s2);
+    width: auto;
+    top: auto;
     margin-top: 0;
   }
 }

@@ -18,6 +18,17 @@ interface HeroProps {
  * Net flow per epoch as bars, the policy multiplier as a step line beneath.
  * Two plots rather than two axes on one, so neither scale lies about the other.
  */
+/**
+ * Slots in the hero plot. The newest slot always holds the epoch in progress,
+ * so the plot carries this many epochs once history has caught up and fewer
+ * before that. `heroEpochsShown` is what the caption has to state.
+ */
+export const HERO_WINDOW = 60;
+
+export function heroEpochsShown(closedEpochs: number): number {
+  return Math.min(closedEpochs, HERO_WINDOW - 1) + 1;
+}
+
 export function HeroChart({ epochs, liveEpoch, liveFlow, liveM, width, height }: HeroProps) {
   const { t } = useI18n();
   const PAD_L = 52;
@@ -44,7 +55,7 @@ export function HeroChart({ epochs, liveEpoch, liveFlow, liveM, width, height }:
 
   // A fixed sixty slot window that scrolls, so the plot is never mostly empty
   // and a bar never changes width as history accumulates.
-  const WINDOW = 60;
+  const WINDOW = HERO_WINDOW;
   const recent = epochs.slice(-(WINDOW - 1));
   const bars: { epoch: number; flow: number; m: number; cut: boolean; live: boolean }[] = recent.map(
     (r) => ({ epoch: r.epoch, flow: r.netFlow, m: r.m, cut: r.m < r.mBefore, live: false }),

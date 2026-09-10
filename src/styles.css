@@ -319,7 +319,8 @@ body {
 .row .k {
   font-size: var(--t1);
   letter-spacing: 0.1em;
-  text-transform: uppercase;
+  /* No text-transform: every label here is authored in capitals, and the
+     policy multiplier is written lowercase m, as the whitepaper writes it. */
   color: var(--faint);
   white-space: nowrap;
 }
@@ -494,7 +495,8 @@ body {
   gap: 7px;
   font-size: var(--t1);
   letter-spacing: 0.1em;
-  text-transform: uppercase;
+  /* No text-transform: every label here is authored in capitals, and the
+     policy multiplier is written lowercase m, as the whitepaper writes it. */
   color: var(--faint);
 }
 
@@ -680,7 +682,8 @@ body {
   font-size: var(--t1);
   font-weight: 500;
   letter-spacing: 0.12em;
-  text-transform: uppercase;
+  /* No text-transform: every label here is authored in capitals, and the
+     policy multiplier is written lowercase m, as the whitepaper writes it. */
   color: var(--faint);
   text-align: right;
   padding: 0 0 8px;
@@ -937,7 +940,8 @@ body {
   font-size: var(--t1);
   letter-spacing: 0.1em;
   color: var(--faint);
-  text-transform: uppercase;
+  /* No text-transform: these labels are authored in capitals, and the policy
+     multiplier keeps the lowercase m the whitepaper uses. */
 }
 
 .assume .v {
@@ -1099,17 +1103,23 @@ body {
     min-height: 100%;
   }
 
+  /* Source order on a phone: the clock, what is happening, and the time
+     control sit under the header, and the footer ends the document instead of
+     burying the only control the reader has beneath it. */
   .main {
     overflow: visible;
-    order: 1;
     padding: var(--s2);
   }
 
   .rail {
-    order: 2;
     border-right: 0;
-    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
     overflow: visible;
+  }
+
+  /* Touch targets: 32px is below the 44px minimum on a phone. */
+  .speeds button {
+    min-height: 44px;
   }
 
   .head {

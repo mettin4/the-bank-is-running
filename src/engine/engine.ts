@@ -28,6 +28,7 @@ import {
   M_LAUNCH,
   RESOLUTION_FEE_CEILING,
   RESOLUTION_WINDOW_DAYS,
+  REGIME_BAND_FRACTION,
   REVOCATION_FEE_RATE,
 } from './constants';
 import { buy, buyNoFee, price as poolPrice, sell, type Pool } from './amm';
@@ -829,7 +830,7 @@ export class Engine {
    * so the first hours of an epoch do not flap around zero.
    */
   private updateRegime() {
-    const dust = this.pool.eth * 0.005;
+    const dust = this.pool.eth * REGIME_BAND_FRACTION;
     if (Math.abs(this.netFlowEpoch) < dust) return;
     const next: Regime = this.netFlowEpoch > 0 ? 'EXPANSION' : 'CONTRACTION';
     if (next === this.regime) return;
@@ -871,7 +872,11 @@ export class Engine {
       signal,
       m: this.m,
       mBefore,
-      regime: this.regime,
+      // Whitepaper 5: "Each epoch is either expansion (net flow positive) or
+      // contraction (net flow negative or zero)." The closed record states that,
+      // not the live routing regime, which carries a hysteresis band across
+      // epochs and so can disagree with the epoch's own final net flow.
+      regime: netFlow > 0 ? 'EXPANSION' : 'CONTRACTION',
       sentiment: this.sentiment,
       burns: this.burns,
       circulating: this.circulating,

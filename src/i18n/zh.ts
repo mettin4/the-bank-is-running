@@ -49,7 +49,7 @@ export const zh: Dict = {
   'rail.feesBuyBack': '手续费回购销毁',
   'rail.policyRate': '政策利率 m',
   'rail.policyRateHint':
-    '发行乘数。资金转为净流出的当个 EPOCH 一次性大幅下调,只有流入持续时才小步回升。',
+    '发行乘数。信号转负的当个 EPOCH 一次性大幅下调，只有流入持续时才小步回升。信号是最近两个 EPOCH 净流量之和。',
 
   'regime.EXPANSION': '扩张',
   'regime.CONTRACTION': '收缩',
@@ -77,7 +77,7 @@ export const zh: Dict = {
   'hero.outflowEpoch': '流出 EPOCH',
   'hero.multiplier': '乘数 m',
   'hero.caption':
-    '六十个 EPOCH。柱为 ETH 净流量,下方折线为发行乘数,每个红色刻度代表该 EPOCH 下调了利率。',
+    '最近 {n} 个 EPOCH。柱为 ETH 净流量，下方折线为发行乘数，每个红色刻度代表该 EPOCH 下调了利率。',
   'hero.alt': '上方为每个 EPOCH 的 ETH 净流量,下方为政策乘数',
 
   'stat.circulating': '$STANDARD 流通量',
@@ -200,7 +200,9 @@ export const zh: Dict = {
   'log.epoch': 'EPOCH',
   'log.regime': '状态',
   'log.netFlow': '净流量',
-  'log.m': 'm',
+  'log.m': '收盘 m',
+  'log.mHint':
+    '本 EPOCH 收盘时定下的乘数。它管的是下一个 EPOCH，因此同一行的发行量是按上一次收盘的乘数流出的。',
   'log.issued': '发行',
   'log.burned': '销毁',
   'log.withdrawn': '提取',
@@ -268,6 +270,7 @@ export const zh: Dict = {
   'av.RATE_RAISE': '+{v} / 正向 EPOCH',
   'av.RATE_CUT': '-{v} / 负向 EPOCH',
   'av.EPOCH_LENGTH': '{v} 协议小时',
+  'av.REGIME_BAND': '池子 ETH 的 {v} · 仅影响流向',
   'av.TRADING_FEE': '{v} · 以 ETH 收取',
   'av.RESOLUTION_FEE': '下限 {lo} / 上限 {hi}',
   'av.LICENSE_FLOOR': '单个分行 {v} 天收益',
@@ -294,8 +297,8 @@ export const zh: Dict = {
   'land.h1': '主权链上中央银行。',
   'land.s1': '他们的原话 · 完全自主运行',
   'land.b1':
-    'STANDARD 是一套完全由代码运行的货币系统。没有董事会制定政策，也没有人能介入修改。规则只写一次，银行永远照章执行。',
-  'land.h2': '唯一输入：ETH净流量。',
+    'STANDARD 是一套完全由代码运行的货币系统。它不向任何董事会、委员会或政府负责。规则只写一次，共 4,000 行不可更改的代码，银行照此执行。少数上线参数仍在人手中，货币规则不由人改。',
+  'land.h2': '唯一输入：ETH 净流量。',
   'land.s2': '只在一个池子计量 · 其他一概不算',
   'land.b2':
     '所有交易都发生在唯一的 ETH/STANDARD 池子里。每个 EPOCH，银行只在这里计量一个数字：流入的 ETH 减去流出的 ETH。下面的每一个决策都由这个数字决定。',
@@ -314,7 +317,7 @@ export const zh: Dict = {
   'land.h6': 'STANDARD 尚未上线。它的规则已在这里运行。',
   'land.s6': '非官方 · 合成市场 · 所有假设均已标注',
   'land.b6':
-    '本站实现了白皮书的规则，并让它在合成市场中运行：1000家模拟银行与交易机器人。上线参数尚未公布，所有假设值都在应用内标注。在银行诞生之前，先看它会如何行事。',
+    '本站实现了白皮书的规则，并让它在合成市场中运行：1,000 家程序化银行与交易机器人。上线参数尚未公布，所有假设值都在应用内标注。在银行诞生之前，先看它会如何行事。',
   'land.tag.autonomous': '自主运行',
   'land.tag.immutable': '不可更改',
   'land.tag.pool': '单一池子',
@@ -396,7 +399,11 @@ export const zhAssumed: AssumedDict = {
   },
   EPOCH_LENGTH: {
     label: 'EPOCH 长度',
-    note: '隐去。文档中“天”与“EPOCH”并用,因此一个 EPOCH 按一天处理。',
+    note: '隐去。文档中“天”与“EPOCH”并用，因此一个 EPOCH 按一天处理。',
+  },
+  REGIME_BAND: {
+    label: '状态滞回带',
+    note: '白皮书未作规定。净流量低于池子 ETH 的这一比例时，手续费流向不变，以免平静的 EPOCH 反复切换金库。它只影响 EPOCH 内的流向：已收盘的 EPOCH 按其自身净流量的正负记录，依第 5 节。',
   },
   TRADING_FEE: {
     label: '交易手续费',

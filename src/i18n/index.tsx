@@ -13,10 +13,36 @@ const TABLE: Record<Locale, { dict: Dict; events: EventDict; assumed: AssumedDic
   zh: { dict: zh, events: zhEvents, assumed: zhAssumed },
 };
 
-function stored(): Locale {
+function parse(v: string | null): Locale | null {
+  return v === 'zh' || v === 'en' ? v : null;
+}
+
+/**
+ * ?lang=zh makes the Chinese terminal directly linkable. The parameter wins over
+ * the stored choice on that load and is then written to storage, so it survives
+ * the move from the landing to /app even though navigate() does not carry the
+ * query along.
+ */
+function fromUrl(): Locale | null {
   try {
-    const v = localStorage.getItem(KEY);
-    if (v === 'zh' || v === 'en') return v;
+    return parse(new URLSearchParams(window.location.search).get('lang'));
+  } catch {
+    return null;
+  }
+}
+
+function stored(): Locale {
+  const url = fromUrl();
+  if (url) {
+    try {
+      localStorage.setItem(KEY, url);
+    } catch {
+      /* the parameter still applies to this load, it just will not persist */
+    }
+    return url;
+  }
+  try {
+    return parse(localStorage.getItem(KEY)) ?? 'en';
   } catch {
     /* private windows and blocked storage fall back to English */
   }

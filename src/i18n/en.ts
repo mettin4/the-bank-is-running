@@ -25,7 +25,7 @@ export const en = {
   'tab.overview': 'OVERVIEW',
   'tab.supply': 'SUPPLY',
   'tab.auctions': 'AUCTIONS',
-  'tab.defence': 'DEFENCE',
+  'tab.defence': 'DEFENSE',
   'tab.log': 'LOG',
   'tab.sections': 'Sections',
   'tabcap.overview': 'THE SIGNAL AND WHAT THE BANK DID ABOUT IT',
@@ -47,7 +47,7 @@ export const en = {
   'rail.feesBuyBack': 'FEES BUY BACK AND BURN',
   'rail.policyRate': 'POLICY RATE m',
   'rail.policyRateHint':
-    'The issuance multiplier. It falls in one big step the epoch capital turns negative and climbs back in small steps only while inflows persist.',
+    'The issuance multiplier. It falls in one big step the epoch the signal turns negative and climbs back in small steps only while inflows persist. The signal is the trailing two epoch sum of net flow.',
 
   'regime.EXPANSION': 'EXPANSION',
   'regime.CONTRACTION': 'CONTRACTION',
@@ -86,7 +86,7 @@ export const en = {
   'hero.outflowEpoch': 'OUTFLOW EPOCH',
   'hero.multiplier': 'MULTIPLIER m',
   'hero.caption':
-    'SIXTY EPOCHS. BARS ARE NET ETH FLOW, THE LINE BENEATH IS THE ISSUANCE MULTIPLIER, AND EACH RED TICK IS AN EPOCH THE RATE WAS CUT.',
+    'THE LAST {n} EPOCHS. BARS ARE NET ETH FLOW, THE LINE BENEATH IS THE ISSUANCE MULTIPLIER, AND EACH RED TICK IS AN EPOCH THE RATE WAS CUT.',
   'hero.alt': 'Net ETH flow per epoch above, the policy multiplier below',
 
   'stat.circulating': '$STANDARD CIRCULATING',
@@ -190,7 +190,7 @@ export const en = {
   'exit.run': 'RUN',
   'exit.curveAlt': 'Resolution fee against seven day exit pressure',
 
-  'fee.title': 'FEE ENGINE, RESERVES, DEFENCE',
+  'fee.title': 'FEE ENGINE, RESERVES, DEFENSE',
   'fee.note': '70 / 15 / 15',
   'fee.hint':
     'Every swap pays a fee in ETH. Seventy per cent goes to whichever vault the epoch calls for, fifteen to liquidity that can never be pulled, fifteen to the team.',
@@ -215,7 +215,9 @@ export const en = {
   'log.epoch': 'EPOCH',
   'log.regime': 'REGIME',
   'log.netFlow': 'NET FLOW',
-  'log.m': 'm',
+  'log.m': 'm CLOSE',
+  'log.mHint':
+    'The multiplier set when this epoch closed. It governs the next epoch, so the ISSUED beside it was streamed at the previous close.',
   'log.issued': 'ISSUED',
   'log.burned': 'BURNED',
   'log.withdrawn': 'WITHDRAWN',
@@ -284,6 +286,7 @@ export const en = {
   'av.RATE_RAISE': '+{v} / POSITIVE EPOCH',
   'av.RATE_CUT': '-{v} / NEGATIVE EPOCH',
   'av.EPOCH_LENGTH': '{v} PROTOCOL HOURS',
+  'av.REGIME_BAND': '{v} OF POOL ETH, ROUTING ONLY',
   'av.TRADING_FEE': '{v} IN ETH',
   'av.RESOLUTION_FEE': '{lo} FLOOR / {hi} CEILING',
   'av.LICENSE_FLOOR': '{v} DAYS OF ONE BRANCH YIELD',
@@ -313,7 +316,7 @@ export const en = {
   'land.h1': 'The sovereign onchain central bank.',
   'land.s1': 'THEIR WORDS, NOT OURS · FULLY AUTONOMOUS',
   'land.b1':
-    'STANDARD is a monetary system run entirely by code. No board sets policy and no one can step in to change it. The rules were written once, and the bank follows them.',
+    'STANDARD is a monetary system run entirely by code. It answers to no board, committee, or government. The rules were written once, 4,000 lines of immutable code, and the bank follows them. A few launch parameters stay in human hands; everything monetary does not.',
   'land.h2': 'One input: net ETH flow.',
   'land.s2': 'MEASURED AT ONE POOL · NOTHING ELSE COUNTS',
   'land.b2':
@@ -333,7 +336,7 @@ export const en = {
   'land.h6': "STANDARD hasn't launched. Here, its rules already run.",
   'land.s6': 'UNOFFICIAL · SYNTHETIC MARKET · EVERY ASSUMPTION LABELED',
   'land.b6':
-    "This site implements the whitepaper's rules and runs them against a synthetic market: 1,000 simulated banks and bot traders. Launch parameters aren't public, so assumed values are labeled in the app. Watch how the bank will behave, before it exists.",
+    "This site implements the whitepaper's rules and runs them against a synthetic market: 1,000 synthetic banks and bot traders. Launch parameters aren't public, so assumed values are labeled in the app. Watch how the bank will behave, before it exists.",
   'land.tag.autonomous': 'AUTONOMOUS',
   'land.tag.immutable': 'IMMUTABLE',
   'land.tag.pool': 'ONE POOL',
@@ -419,6 +422,10 @@ export const enAssumed = {
   EPOCH_LENGTH: {
     label: 'EPOCH LENGTH',
     note: 'Redacted. The document speaks in days and in "epochs", so one epoch is read as one day.',
+  },
+  REGIME_BAND: {
+    label: 'REGIME HYSTERESIS BAND',
+    note: 'Not in the whitepaper. Fee routing ignores a net flow under this share of pool ETH, so a quiet epoch does not flip the vault repeatedly. It touches intra epoch routing only: a closed epoch is recorded by the sign of its own net flow, per section 5.',
   },
   TRADING_FEE: {
     label: 'TRADING FEE',

@@ -20,6 +20,14 @@ export const FEE_SPLIT_VAULT = 0.7;
 export const FEE_SPLIT_POL = 0.15;
 export const FEE_SPLIT_TEAM = 0.15;
 
+/**
+ * Fee routing ignores a net flow smaller than this share of pool ETH, so a
+ * quiet epoch does not flip the vault back and forth. Not in the whitepaper,
+ * so it is listed in ASSUMED PARAMETERS. Closed epoch records ignore the band
+ * and state the sign of their own net flow, per whitepaper 5.
+ */
+export const REGIME_BAND_FRACTION = 0.005;
+
 export const M_FLOOR = 0.2;
 export const M_CEILING = 1.25;
 
@@ -92,6 +100,10 @@ export const ASSUMED_PARAMS: AssumedParam[] = [
   { id: 'RATE_RAISE', vars: { v: M_RAISE_STEP.toFixed(2) } },
   { id: 'RATE_CUT', vars: { v: M_CUT_STEP.toFixed(2) } },
   { id: 'EPOCH_LENGTH', vars: { v: HOURS_PER_EPOCH } },
+  {
+    id: 'REGIME_BAND',
+    vars: { v: `${(REGIME_BAND_FRACTION * 100).toFixed(1)}%` },
+  },
   { id: 'TRADING_FEE', vars: { v: `${(TRADING_FEE_BPS / 100).toFixed(2)}%` } },
   {
     id: 'RESOLUTION_FEE',

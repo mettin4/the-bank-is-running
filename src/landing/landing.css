@@ -494,6 +494,16 @@
     display: none;
   }
 
+  /* Under about 380px the mark, the disclaimer, the toggle and the button
+     cannot share one row. The row wraps rather than clipping the disclaimer. */
+  .lhead {
+    flex-wrap: wrap;
+  }
+
+  .lhead-mark {
+    flex-shrink: 0;
+  }
+
   .lhead-right {
     gap: var(--s2);
   }

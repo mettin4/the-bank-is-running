@@ -15,7 +15,7 @@ import {
   signed,
 } from '../engine/format';
 import type { Snapshot } from '../engine/types';
-import { AuctionCurve, ExitCurve, HeroChart, Spark } from './charts';
+import { AuctionCurve, ExitCurve, HeroChart, Spark, heroEpochsShown } from './charts';
 import { Hint } from './Hint';
 import { Num } from './Num';
 import { Panel, Row, Stat } from './Panel';
@@ -26,7 +26,7 @@ import { useMeasure } from './useMeasure';
 /* ---------------------------------------------------------------- hero --- */
 
 export function Hero({ s }: { s: Snapshot }) {
-  const { t } = useI18n();
+  const { t, tv } = useI18n();
   const [ref, w] = useMeasure<HTMLDivElement>();
   const positive = s.netFlowEpoch >= 0;
 
@@ -73,7 +73,7 @@ export function Hero({ s }: { s: Snapshot }) {
           height={320}
         />
       </div>
-      <div className="cap">{t('hero.caption')}</div>
+      <div className="cap">{tv('hero.caption', { n: heroEpochsShown(s.epochs.length) })}</div>
     </section>
   );
 }
@@ -484,7 +484,10 @@ export function EpochLog({ s }: { s: Snapshot }) {
               <th>{t('log.epoch')}</th>
               <th>{t('log.regime')}</th>
               <th>{t('log.netFlow')}</th>
-              <th>{t('log.m')}</th>
+              <th>
+                {t('log.m')}
+                <Hint text={t('log.mHint')} />
+              </th>
               <th>{t('log.issued')}</th>
               <th>{t('log.burned')}</th>
               <th>{t('log.withdrawn')}</th>
